@@ -51,23 +51,23 @@ const Homepage = () => {
     animateCounter(setPeopleHelped, 8934);
   }, []);
 
-  const successStories = [
-    {
-      name: "Sunita's Kitchen",
-      story: "Thanks to the platform, we've been able to feed 500+ families in our community every month with quality surplus food.",
-      image: "https://media.istockphoto.com/id/1449552590/photo/portrait-of-indian-woman-enjoying-while-cooking-meal-in-the-kitchen-stock-photo.jpg?s=612x612&w=0&k=20&c=sSSFGWffGnjDJEX_VCA3YQ5B3T1jQ_0kCbPTL0BItlg="
-    },
-    {
-      name: "Green Grocery Co.",
-      story: "Instead of wasting 200kg of fresh produce weekly, we now donate it all through this amazing platform.",
-      image: "https://images.pexels.com/photos/1300972/pexels-photo-1300972.jpeg"
-    },
-    {
-      name: "Community Center",
-      story: "Our food distribution program has grown 300% since joining. We're making a real difference!",
-      image: "https://images.pexels.com/photos/6995245/pexels-photo-6995245.jpeg"
-    }
-  ];
+    const successStories = [
+      {
+        name: "Sunita's Kitchen",
+        story: "Thanks to the platform, we've been able to feed 500+ families in our community every month with quality surplus food.",
+        image: "https://media.istockphoto.com/id/1449552590/photo/portrait-of-indian-woman-enjoying-while-cooking-meal-in-the-kitchen-stock-photo.jpg?s=612x612&w=0&k=20&c=sSSFGWffGnjDJEX_VCA3YQ5B3T1jQ_0kCbPTL0BItlg="
+      },
+      {
+        name: "Green Grocery Co.",
+        story: "Instead of wasting 200kg of fresh produce weekly, we now donate it all through this amazing platform.",
+        image: "https://images.pexels.com/photos/1300972/pexels-photo-1300972.jpeg"
+      },
+      {
+        name: "Community Center",
+        story: "Our food distribution program has grown 300% since joining. We're making a real difference!",
+        image: "https://images.pexels.com/photos/6995245/pexels-photo-6995245.jpeg"
+      }
+    ];
 
   const nextStory = () => {
     setCurrentStory((prev) => (prev + 1) % successStories.length);

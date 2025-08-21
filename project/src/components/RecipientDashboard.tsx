@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -16,10 +16,36 @@ import {
   Star,
   Truck
 } from 'lucide-react';
+import axios from "axios";
 
 const RecipientDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('available');
+
+  
+  // Session Cheack
+  const [session, setSession] = useState(null);
+  // const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const checkSession = async () => {
+  //     try {
+  //       const res = await axios.get("http://localhost:8000/verify-session/", {
+  //         withCredentials: true,
+  //       });
+  //       setSession(res.data);
+  //       console.log("Session:", res.data);
+  //     } catch(err) {
+  //       setSession(null);
+  //       navigate('/');
+  //       console.log(err);
+  //       console.log("Not logged in or expired");
+  //     }
+  //   };
+
+  //   checkSession();
+  // }, []);
+
 
   const stats = [
     { label: 'Meals Received', value: '156', icon: Package, color: 'emerald' },
@@ -77,7 +103,9 @@ const RecipientDashboard = () => {
     { id: 3, food: 'Bread & Pastries', status: 'collected', pickup: 'Yesterday 4:00 PM', donor: 'Corner Bakery' }
   ];
 
-  const handleLogout = () => {
+   const handleLogout = async () => {
+    const response = await axios.post("http://localhost:8000/logout/");
+    console.log("Signout Success:", response.data);
     navigate('/');
   };
 
@@ -224,54 +252,69 @@ const RecipientDashboard = () => {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
-                  {availableFood.map((item, index) => (
-                    <motion.div
-                      key={item.id}
-                      className="bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow duration-300 overflow-hidden"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: index * 0.1 }}
-                    >
-                      <img 
-                        src={item.image} 
-                        alt={item.title}
-                        className="w-full h-48 object-cover"
-                      />
-                      <div className="p-6">
-                        <div className="flex items-start justify-between mb-3">
-                          <h3 className="font-bold text-gray-900 text-lg">{item.title}</h3>
-                          <span className="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-medium">
-                            {item.category}
-                          </span>
-                        </div>
-                        
-                        <div className="space-y-2 mb-4">
-                          <div className="flex items-center space-x-2 text-gray-600">
-                            <Users className="w-4 h-4 hover:scale-110 transition-transform duration-300" />
-                            <span className="text-sm">{item.donor}</span>
-                          </div>
-                          <div className="flex items-center space-x-2 text-gray-600">
-                            <MapPin className="w-4 h-4 hover:scale-110 transition-transform duration-300" />
-                            <span className="text-sm">{item.distance} away</span>
-                          </div>
-                          <div className="flex items-center space-x-2 text-gray-600">
-                            <Package className="w-4 h-4 hover:scale-110 transition-transform duration-300" />
-                            <span className="text-sm">{item.quantity}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Clock className="w-4 h-4 text-gray-400 hover:scale-110 transition-transform duration-300" />
-                            <span className={`text-sm font-medium ${getExpiryColor(item.expires)}`}>
-                              Expires in {item.expires}
+                  {availableFood.map((item, index) => {
+                    // Simulate expiry tracking (hours left)
+                    const hoursLeft = parseInt(item.expires);
+                    const expired = hoursLeft <= 0;
+                    if (expired) return null;
+                    return (
+                      <motion.div
+                        key={item.id}
+                        className="bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow duration-300 overflow-hidden group relative"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: index * 0.1 }}
+                      >
+                        <img 
+                          src={item.image} 
+                          alt={item.title}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="p-6">
+                          <div className="flex items-start justify-between mb-3">
+                            <h3 className="font-bold text-gray-900 text-lg">{item.title}</h3>
+                            <span className="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-medium">
+                              {item.category}
                             </span>
                           </div>
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-semibold shadow">Safe to Eat for {item.expires}</span>
+                            <span className={`bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold shadow ${hoursLeft <= 1 ? 'animate-pulse' : ''}`}>{hoursLeft}h left</span>
+                          </div>
+                          <div className="space-y-2 mb-4">
+                            <div className="flex items-center space-x-2 text-gray-600">
+                              <Users className="w-4 h-4 hover:scale-110 transition-transform duration-300" />
+                              <span className="text-sm">{item.donor}</span>
+                            </div>
+                            <div className="flex items-center space-x-2 text-gray-600">
+                              <MapPin className="w-4 h-4 hover:scale-110 transition-transform duration-300" />
+                              <span className="text-sm">{item.distance} away</span>
+                            </div>
+                            <div className="flex items-center space-x-2 text-gray-600">
+                              <Package className="w-4 h-4 hover:scale-110 transition-transform duration-300" />
+                              <span className="text-sm">{item.quantity}</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Clock className="w-4 h-4 text-gray-400 hover:scale-110 transition-transform duration-300" />
+                              <span className={`text-sm font-medium ${getExpiryColor(item.expires)}`}>
+                                Expires in {item.expires}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+                            <strong>Packaging & Storage:</strong> Please use clean, sealed containers. Store perishable items in cool conditions. Follow food safety guidelines to ensure quality.
+                          </div>
+                          <button 
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-medium transition-colors duration-200 mt-2"
+                            onClick={() => navigate('/request-food', { state: { food: item } })}
+                          >
+                            Request This Food
+                          </button>
                         </div>
-                        
-                        <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-medium transition-colors duration-200">
-                          Request This Food
-                        </button>
-                      </div>
-                    </motion.div>
-                  ))}
+                        <div className="absolute top-4 right-4 bg-white/80 rounded-full px-3 py-1 text-xs font-semibold text-emerald-700 shadow">Food Safety</div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </motion.div>
             </div>

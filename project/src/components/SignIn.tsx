@@ -24,7 +24,6 @@ const SignIn = () => {
     });
   };
 
-  
   // const handleSubmit = (e: React.FormEvent) => {
   //   e.preventDefault();
   //   // Simulate authentication
@@ -36,8 +35,6 @@ const SignIn = () => {
   // };
 
 
-
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -45,25 +42,33 @@ const SignIn = () => {
       if (isSignUp) {
         console.log("request...");
         // Sign Up API
-        const response = await axios.post("http://localhost:8000/register/", {
-          name: formData.name,
-          username: formData.email,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-          role: formData.userType,
-        });
-
-        console.log("Signup Success:", response.data);
-        navigate(formData.userType === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
+        try {
+          const response = await axios.post("http://localhost:8000/register/", {
+            name: formData.name,
+            username: formData.email,
+            password: formData.password,
+            confirmPassword: formData.confirmPassword,
+            role: formData.userType,
+          });
+          console.log("Signup Success:", response.data);
+          navigate(formData.userType === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
+        } catch (err) {
+          console.log("Signup Error:", err);
+        }
+        
       } else {
         // Sign In API
-        const response = await axios.post("http://localhost:8000/login/", {
-          username: formData.email,
-          password: formData.password,
-        });
-
-        console.log("Signin Success:", response.data);
-        navigate(formData.userType === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
+        console.log("request...");
+        try {
+          const response = await axios.post("http://localhost:8000/login/", {
+            username: formData.email,
+            password: formData.password,
+          });
+          console.log("Signin Success:", response.data);
+          navigate(formData.userType === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
+        } catch (err) {
+          console.log("Signin Error:", err);
+        }
       }
     } catch (error: any) {
       console.error("Auth error:", error.response?.data || error.message);
@@ -144,8 +149,8 @@ const SignIn = () => {
             <button
               onClick={() => setFormData({ ...formData, userType: 'donate' })}
               className={`py-2 px-4 rounded-lg font-medium transition-all duration-200 ${formData.userType === 'donate'
-                  ? 'bg-orange-500 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-orange-500 text-white shadow-md'
+                : 'text-gray-600 hover:text-gray-900'
                 }`}
             >
               Provider
@@ -153,8 +158,8 @@ const SignIn = () => {
             <button
               onClick={() => setFormData({ ...formData, userType: 'request' })}
               className={`py-2 px-4 rounded-lg font-medium transition-all duration-200 ${formData.userType === 'request'
-                  ? 'bg-emerald-500 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-emerald-500 text-white shadow-md'
+                : 'text-gray-600 hover:text-gray-900'
                 }`}
             >
               Receiver
@@ -245,8 +250,8 @@ const SignIn = () => {
             <motion.button
               type="submit"
               className={`w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 transform hover:scale-105 ${formData.userType === 'donate'
-                  ? 'bg-orange-500 hover:bg-orange-600'
-                  : 'bg-emerald-600 hover:bg-emerald-700'
+                ? 'bg-orange-500 hover:bg-orange-600'
+                : 'bg-emerald-600 hover:bg-emerald-700'
                 }`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
