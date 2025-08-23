@@ -55,7 +55,7 @@ const SignIn = () => {
         } catch (err) {
           console.log("Signup Error:", err);
         }
-        
+
       } else {
         // Sign In API
         console.log("request...");
@@ -65,7 +65,7 @@ const SignIn = () => {
             password: formData.password,
           });
           console.log("Signin Success:", response.data);
-          navigate(formData.userType === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
+          navigate(response.data.role === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
         } catch (err) {
           console.log("Signin Error:", err);
         }
@@ -145,26 +145,28 @@ const SignIn = () => {
           </div>
 
           {/* User Type Toggle */}
-          <div className="bg-gray-100 p-1 rounded-xl mb-6 grid grid-cols-2">
-            <button
-              onClick={() => setFormData({ ...formData, userType: 'donate' })}
-              className={`py-2 px-4 rounded-lg font-medium transition-all duration-200 ${formData.userType === 'donate'
-                ? 'bg-orange-500 text-white shadow-md'
-                : 'text-gray-600 hover:text-gray-900'
-                }`}
-            >
-              Provider
-            </button>
-            <button
-              onClick={() => setFormData({ ...formData, userType: 'request' })}
-              className={`py-2 px-4 rounded-lg font-medium transition-all duration-200 ${formData.userType === 'request'
-                ? 'bg-emerald-500 text-white shadow-md'
-                : 'text-gray-600 hover:text-gray-900'
-                }`}
-            >
-              Receiver
-            </button>
-          </div>
+          {isSignUp && (
+            <div className="bg-gray-100 p-1 rounded-xl mb-6 grid grid-cols-2">
+              <button
+                onClick={() => setFormData({ ...formData, userType: 'donate' })}
+                className={`py-2 px-4 rounded-lg font-medium transition-all duration-200 ${formData.userType === 'donate'
+                  ? 'bg-orange-500 text-white shadow-md'
+                  : 'text-gray-600 hover:text-gray-900'
+                  }`}
+              >
+                Provider
+              </button>
+              <button
+                onClick={() => setFormData({ ...formData, userType: 'request' })}
+                className={`py-2 px-4 rounded-lg font-medium transition-all duration-200 ${formData.userType === 'request'
+                  ? 'bg-emerald-500 text-white shadow-md'
+                  : 'text-gray-600 hover:text-gray-900'
+                  }`}
+              >
+                Receiver
+              </button>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {isSignUp && (

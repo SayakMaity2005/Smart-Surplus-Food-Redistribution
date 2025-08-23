@@ -6,6 +6,22 @@ from surplus.schemas import RegisterForm
 from surplus.database import get_db
 from surplus.security import Hash
 from surplus import models
+from fastapi_mail import FastMail,MessageSchema,ConnectionConfig
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+conf = ConnectionConfig(
+    MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
+    MAIL_FROM=os.getenv("MAIL_FROM"),
+    MAIL_PORT=int(os.getenv("MAIL_PORT")),
+    MAIL_SERVER=os.getenv("MAIL_SERVER"),
+    MAIL_STARTTLS=os.getenv("MAIL_STARTTLS") == "True",
+    MAIL_SSL_TLS=os.getenv("MAIL_SSL_TLS") == "True",
+    USE_CREDENTIALS=os.getenv("USE_CREDENTIALS") == "True"
+)
 
 router = APIRouter()
 
@@ -38,6 +54,18 @@ async def register(response: Response, request: RegisterForm, db: Session = Depe
         db.add(new_admin)
         db.commit()
         db.refresh(new_admin)
+
+        #Mail Sending --------------------------------------- ##
+        email = str(request.username)    
+        message = MessageSchema(
+            subject="Registration Successful",
+            recipients=[email],
+            body="You Are Successfully Registered!!\nThank you For Registering To Surplus Food Portal\nWelcome To Our New Journey",
+            subtype="plain"
+        )
+        fm = FastMail(conf)
+        await fm.send_message(message)
+
     else:
         user = db.query(models.User).filter(models.User.username == request.username).first()
         if user:
@@ -59,6 +87,18 @@ async def register(response: Response, request: RegisterForm, db: Session = Depe
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
+
+        #Mail Sending --------------------------------------- ##
+        email = str(request.username)    
+        message = MessageSchema(
+            subject="Registration Successful",
+            recipients=[email],
+            body="You Are Successfully Registered!!\nThank you For Registering To Surplus Food Portal\nWelcome To Our New Journey",
+            subtype="plain"
+        )
+        fm = FastMail(conf)
+        await fm.send_message(message)
+
     access_token_expires = VALIDATION_TIME
     access_token = create_access_token(
         data={"sub": request.username}, expires_delta=access_token_expires

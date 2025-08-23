@@ -174,7 +174,7 @@ const RecipientDashboard = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Hello, Marcus!</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Hello, User!</h1>
             <p className="text-gray-600">Find fresh food donations near you and track your requests.</p>
           </motion.div>
         </div>

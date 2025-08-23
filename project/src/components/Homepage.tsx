@@ -458,7 +458,7 @@ const Homepage = () => {
                 <li><a href="#about" className="text-gray-400 hover:text-white transition-colors duration-200">About Us</a></li>
                 <li><a href="#how-it-works" className="text-gray-400 hover:text-white transition-colors duration-200">How It Works</a></li>
                 <li><a href="#volunteers" className="text-gray-400 hover:text-white transition-colors duration-200">Contact</a></li>
-                <li><a href="#contact" className="text-gray-400 hover:text-white transition-colors duration-200">Contact</a></li>
+                {/* <li><a href="#contact" className="text-gray-400 hover:text-white transition-colors duration-200">Contact</a></li> */}
               </ul>
             </div>
             
@@ -475,7 +475,7 @@ const Homepage = () => {
                 </li>
                 <li className="flex items-center space-x-3">
                   <MapPin className="w-4 h-4 text-emerald-400 hover:text-emerald-300 hover:scale-110 transition-all duration-300" />
-                  <span className="text-gray-400">West Chowbaga Road, Mundapra, Kolkata,West Bengal 700107</span>
+                  <span className="text-gray-400">West Chowbaga Road, Mundapara, Kolkata,West Bengal 700107</span>
                 </li>
               </ul>
             </div>
