@@ -19,3 +19,8 @@ class RegisterForm(Register):
 class LoginForm(BaseModel):
     username: str
     password: str
+
+class VerifiedUser(BaseModel):
+    name: str
+    username: str
+    role: str

@@ -56,15 +56,15 @@ async def register(response: Response, request: RegisterForm, db: Session = Depe
         db.refresh(new_admin)
 
         #Mail Sending --------------------------------------- ##
-        email = str(request.username)    
-        message = MessageSchema(
-            subject="Registration Successful",
-            recipients=[email],
-            body="You Are Successfully Registered!!\nThank you For Registering To Surplus Food Portal\nWelcome To Our New Journey",
-            subtype="plain"
-        )
-        fm = FastMail(conf)
-        await fm.send_message(message)
+        # email = str(request.username)    
+        # message = MessageSchema(
+        #     subject="Registration Successful",
+        #     recipients=[email],
+        #     body="You Are Successfully Registered!!\nThank you For Registering To Surplus Food Portal\nWelcome To Our New Journey",
+        #     subtype="plain"
+        # )
+        # fm = FastMail(conf)
+        # await fm.send_message(message)
 
     else:
         user = db.query(models.User).filter(models.User.username == request.username).first()
@@ -89,15 +89,15 @@ async def register(response: Response, request: RegisterForm, db: Session = Depe
         db.refresh(new_user)
 
         #Mail Sending --------------------------------------- ##
-        email = str(request.username)    
-        message = MessageSchema(
-            subject="Registration Successful",
-            recipients=[email],
-            body="You Are Successfully Registered!!\nThank you For Registering To Surplus Food Portal\nWelcome To Our New Journey",
-            subtype="plain"
-        )
-        fm = FastMail(conf)
-        await fm.send_message(message)
+        # email = str(request.username)    
+        # message = MessageSchema(
+        #     subject="Registration Successful",
+        #     recipients=[email],
+        #     body="You Are Successfully Registered!!\nThank you For Registering To Surplus Food Portal\nWelcome To Our New Journey",
+        #     subtype="plain"
+        # )
+        # fm = FastMail(conf)
+        # await fm.send_message(message)
 
     access_token_expires = VALIDATION_TIME
     access_token = create_access_token(
@@ -107,8 +107,8 @@ async def register(response: Response, request: RegisterForm, db: Session = Depe
         key="surplus_access_token",
         value=access_token,
         httponly=True,   # JS can't read
-        secure=False,    # in production True (HTTPS only)
-        samesite="lax"
+        secure=True,    # in production True (HTTPS only)
+        samesite="None"
     )
     return {"status":"ok","message": "Registration successful!"}
     # return Token(access_token=access_token, token_type="bearer")

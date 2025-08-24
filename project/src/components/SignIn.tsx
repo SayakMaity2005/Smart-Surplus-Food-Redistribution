@@ -49,7 +49,7 @@ const SignIn = () => {
             password: formData.password,
             confirmPassword: formData.confirmPassword,
             role: formData.userType,
-          });
+          }, { withCredentials: true });  // { withCredentials: true } this the line makes the cookie thing possible
           console.log("Signup Success:", response.data);
           navigate(formData.userType === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
         } catch (err) {
@@ -63,7 +63,7 @@ const SignIn = () => {
           const response = await axios.post("http://localhost:8000/login/", {
             username: formData.email,
             password: formData.password,
-          });
+          }, { withCredentials: true });  // { withCredentials: true } this the line makes the cookie thing possible
           console.log("Signin Success:", response.data);
           navigate(response.data.role === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
         } catch (err) {

@@ -32,7 +32,7 @@ async def login(response: Response, request: LoginForm, db: Session = Depends(ge
         key="surplus_access_token",
         value=access_token,
         httponly=True,   # JS can't read
-        secure=False,    # in production True (HTTPS only)
-        samesite="lax"
+        secure=True,    # in production True (HTTPS only)
+        samesite="None"
     )
     return {"status":"ok","message": "Login successful!"}

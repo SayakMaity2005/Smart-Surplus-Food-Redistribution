@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, Plus, Package, TrendingUp, Users, MapPin, LogOut, Bell, Settings } from 'lucide-react';
 import axios from 'axios';
+
+// User template
+interface User {
+  name: string;
+  username: string;
+  role: string;
+}
 
 const DonorDashboard = () => {
   const navigate = useNavigate();
@@ -11,6 +18,41 @@ const DonorDashboard = () => {
     console.log("Signout Success:", response.data);
     navigate('/'); // Redirect to homepage or login
   };
+
+  // Session Cheack
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/verify-session/", {
+          withCredentials: true,
+        });
+        setUser(res.data.user);
+        console.log("Session:", res.data);
+      } catch(err) {
+        setUser(null);
+        navigate('/');
+        console.log(err);
+      }
+    };
+
+    checkSession();
+  }, []);
+
+  const getUserName = (name: string) => {
+    console.log(user?.name);
+    let userName = name;
+    for(let i=0; i<name.length; i++) {
+      if(i!=0 && name.charAt(i) === ' ') {
+        userName = name.substring(0, i);
+        break; 
+      }
+    }
+    userName = userName.toLowerCase();
+    userName = userName.substring(0,1).toUpperCase() + userName.substring(1);
+    return userName;
+  };
+
   // Placeholder for getStatusIcon
   const getStatusIcon = (status: string) => {
     return <span className="mr-2">🍽️</span>;
@@ -65,7 +107,7 @@ const DonorDashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Hello Donor!</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Hello {getUserName(user?.name || "Donor")}!</h1>
             <p className="text-gray-600">Track your donations and see the impact you're making in the community.</p>
           </motion.div>
         </div>

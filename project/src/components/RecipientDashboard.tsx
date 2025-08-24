@@ -18,33 +18,53 @@ import {
 } from 'lucide-react';
 import axios from "axios";
 
+// User template
+interface User {
+  name: string;
+  username: string;
+  role: string;
+}
+
 const RecipientDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('available');
 
   
   // Session Cheack
-  const [session, setSession] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   // const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const checkSession = async () => {
-  //     try {
-  //       const res = await axios.get("http://localhost:8000/verify-session/", {
-  //         withCredentials: true,
-  //       });
-  //       setSession(res.data);
-  //       console.log("Session:", res.data);
-  //     } catch(err) {
-  //       setSession(null);
-  //       navigate('/');
-  //       console.log(err);
-  //       console.log("Not logged in or expired");
-  //     }
-  //   };
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/verify-session/", {
+          withCredentials: true,
+        });
+        setUser(res.data.user);
+        console.log("Session:", res.data);
+      } catch(err) {
+        setUser(null);
+        navigate('/');
+        console.log(err);
+      }
+    };
 
-  //   checkSession();
-  // }, []);
+    checkSession();
+  }, []);
+
+  const getUserName = (name: string) => {
+    console.log(user?.name);
+    let userName = name;
+    for(let i=0; i<name.length; i++) {
+      if(i!=0 && name.charAt(i) === ' ') {
+        userName = name.substring(0, i);
+        break; 
+      }
+    }
+    userName = userName.toLowerCase();
+    userName = userName.substring(0,1).toUpperCase() + userName.substring(1);
+    return userName;
+  };
 
 
   const stats = [
@@ -174,7 +194,7 @@ const RecipientDashboard = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Hello, User!</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Hello, {getUserName(user?.name || "User")}!</h1>
             <p className="text-gray-600">Find fresh food donations near you and track your requests.</p>
           </motion.div>
         </div>
