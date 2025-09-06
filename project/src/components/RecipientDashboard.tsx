@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  Heart, 
-  Search, 
-  MapPin, 
-  Clock, 
-  Package, 
-  CheckCircle, 
+import {
+  Heart,
+  Search,
+  MapPin,
+  Clock,
+  Package,
+  CheckCircle,
   Calendar,
-  Users, 
+  Users,
   LogOut,
   Bell,
   Settings,
@@ -24,14 +24,28 @@ interface User {
   username: string;
   role: string;
 }
+// Item details template
+interface Item {
+  id: number
+  title: string
+  type: string
+  quantity: number
+  unit: string
+  freshness_level: string
+  pickup_location: string
+  expiry_time: string
+  timestamp: string
+  special_instruction: string
+}
 
 const RecipientDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('available');
 
-  
+
   // Session Cheack
   const [user, setUser] = useState<User | null>(null);
+  const [items, setItem] = useState<Item[]>([]);
   // const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,9 +56,20 @@ const RecipientDashboard = () => {
         });
         setUser(res.data.user);
         console.log("Session:", res.data);
-      } catch(err) {
+
+      } catch (err) {
         setUser(null);
         navigate('/');
+        console.log(err);
+      }
+      try {
+        // Get items
+        const res = await axios.get("http://localhost:8000/user/get-all-items/", {
+          withCredentials: true,
+        });
+        setItem(res.data.data);
+        console.log("Session:", res.data);
+      } catch (err) {
         console.log(err);
       }
     };
@@ -55,15 +80,30 @@ const RecipientDashboard = () => {
   const getUserName = (name: string) => {
     console.log(user?.name);
     let userName = name;
-    for(let i=0; i<name.length; i++) {
-      if(i!=0 && name.charAt(i) === ' ') {
+    for (let i = 0; i < name.length; i++) {
+      if (i != 0 && name.charAt(i) === ' ') {
         userName = name.substring(0, i);
-        break; 
+        break;
       }
     }
     userName = userName.toLowerCase();
-    userName = userName.substring(0,1).toUpperCase() + userName.substring(1);
+    userName = userName.substring(0, 1).toUpperCase() + userName.substring(1);
     return userName;
+  };
+
+  // Select Item
+  const selectItem = async (index: number) => {
+    try {
+      const res = await axios.post("http://localhost:8000/user/select-item/", {
+        item_id: items[index].id,
+      },
+      {
+        withCredentials: true,
+      });
+      console.log(res.data);
+    } catch(err) {
+      console.log(err);
+    }
   };
 
 
@@ -123,7 +163,7 @@ const RecipientDashboard = () => {
     { id: 3, food: 'Bread & Pastries', status: 'collected', pickup: 'Yesterday 4:00 PM', donor: 'Corner Bakery' }
   ];
 
-   const handleLogout = async () => {
+  const handleLogout = async () => {
     const response = await axios.post("http://localhost:8000/logout/");
     console.log("Signout Success:", response.data);
     navigate('/');
@@ -228,21 +268,19 @@ const RecipientDashboard = () => {
             <nav className="-mb-px flex space-x-8">
               <button
                 onClick={() => setActiveTab('available')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                  activeTab === 'available'
-                    ? 'border-emerald-500 text-emerald-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${activeTab === 'available'
+                  ? 'border-emerald-500 text-emerald-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
                 Available Food
               </button>
               <button
                 onClick={() => setActiveTab('requests')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                  activeTab === 'requests'
-                    ? 'border-emerald-500 text-emerald-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${activeTab === 'requests'
+                  ? 'border-emerald-500 text-emerald-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
                 My Requests
               </button>
@@ -272,11 +310,21 @@ const RecipientDashboard = () => {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
-                  {availableFood.map((item, index) => {
+                  {items.map((item, index) => {
                     // Simulate expiry tracking (hours left)
-                    const hoursLeft = parseInt(item.expires);
-                    const expired = hoursLeft <= 0;
-                    if (expired) return null;
+                    // const hoursLeft = parseInt(item.expires);
+                    // const expired = hoursLeft <= 0;
+                    // if (expired) return null;
+                    const expiryTime = new Date(item.expiry_time);
+                    const now = new Date();
+                    const diffMillis = expiryTime.getTime() - now.getTime();
+                    const diffMinutes = Math.floor((diffMillis / 1000) / 60);
+                    const hrLeft = Math.floor(diffMinutes / 60);
+                    const minLeft = diffMinutes % 60;
+                    const expTime = new Date(item.expiry_time).toString().substring(4, 21);
+                    const pickupStartTime = new Date(item.timestamp).toString().substring(16, 21);
+                    const pickupCloseTime = new Date(item.expiry_time).toString().substring(16, 21);
+
                     return (
                       <motion.div
                         key={item.id}
@@ -285,8 +333,9 @@ const RecipientDashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: index * 0.1 }}
                       >
-                        <img 
-                          src={item.image} 
+                        <img
+                          // src={item.image} 
+                          src='https://images.pexels.com/photos/1300972/pexels-photo-1300972.jpeg'
                           alt={item.title}
                           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
@@ -294,39 +343,40 @@ const RecipientDashboard = () => {
                           <div className="flex items-start justify-between mb-3">
                             <h3 className="font-bold text-gray-900 text-lg">{item.title}</h3>
                             <span className="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-medium">
-                              {item.category}
+                              {item.type}
                             </span>
                           </div>
                           <div className="flex flex-wrap gap-2 mb-2">
-                            <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-semibold shadow">Safe to Eat for {item.expires}</span>
-                            <span className={`bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold shadow ${hoursLeft <= 1 ? 'animate-pulse' : ''}`}>{hoursLeft}h left</span>
+                            <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-semibold shadow">Safe to Eat upto {expTime}</span>
+                            <span className={`bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold shadow ${hrLeft <= 2 ? 'animate-pulse' : ''}`}>{hrLeft}h {minLeft}m left</span>
                           </div>
                           <div className="space-y-2 mb-4">
                             <div className="flex items-center space-x-2 text-gray-600">
                               <Users className="w-4 h-4 hover:scale-110 transition-transform duration-300" />
-                              <span className="text-sm">{item.donor}</span>
+                              {/* <span className="text-sm">{item.donor}</span> */}
                             </div>
                             <div className="flex items-center space-x-2 text-gray-600">
                               <MapPin className="w-4 h-4 hover:scale-110 transition-transform duration-300" />
-                              <span className="text-sm">{item.distance} away</span>
+                              <span className="text-sm">{item.pickup_location} away</span>
                             </div>
                             <div className="flex items-center space-x-2 text-gray-600">
                               <Package className="w-4 h-4 hover:scale-110 transition-transform duration-300" />
-                              <span className="text-sm">{item.quantity}</span>
+                              <span className="text-sm">{item.quantity} {item.unit}</span>
                             </div>
                             <div className="flex items-center space-x-2">
                               <Clock className="w-4 h-4 text-gray-400 hover:scale-110 transition-transform duration-300" />
-                              <span className={`text-sm font-medium ${getExpiryColor(item.expires)}`}>
+                              {/* <span className={`text-sm font-medium ${getExpiryColor(item.expires)}`}>
                                 Expires in {item.expires}
-                              </span>
+                              </span> */}
                             </div>
                           </div>
                           <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
                             <strong>Packaging & Storage:</strong> Please use clean, sealed containers. Store perishable items in cool conditions. Follow food safety guidelines to ensure quality.
                           </div>
-                          <button 
+                          <button
                             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-medium transition-colors duration-200 mt-2"
-                            onClick={() => navigate('/request-food', { state: { food: item } })}
+                            // onClick={() => navigate('/request-food', { state: { food: item } })}
+                            onClick={() => selectItem(index)}
                           >
                             Request This Food
                           </button>

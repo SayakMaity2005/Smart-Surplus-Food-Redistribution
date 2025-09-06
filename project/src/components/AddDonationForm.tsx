@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AddDonationForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -32,10 +34,64 @@ const AddDonationForm: React.FC = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  // User template
+  interface User {
+    name: string;
+    username: string;
+    role: string;
+  }
+
+  // Session Cheack
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/verify-session/", {
+          withCredentials: true,
+        });
+        setUser(response.data.user);
+        console.log("Session:", response.data);
+      } catch (err) {
+        setUser(null);
+        navigate('/');
+        console.log(err);
+      }
+    };
+
+    checkSession();
+  }, []);
+
+  // Add hours (can exceed 24, auto-adjusts day)
+  const addHours = (date: Date, hours: number): Date => {
+    return new Date(date.getTime() + hours * 60 * 60 * 1000);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Submit logic here
-    alert('Donation submitted!');
+    try {
+      const now = new Date();
+      const expiryTime = addHours(now, Number(formData.safeToEatHours));
+      const response = await axios.post("http://localhost:8000/admin/add-item/", {
+        title: formData.title,
+        type: formData.type,
+        quantity: formData.quantity,
+        unit: formData.unit,
+        freshness_level: formData.freshness,
+        pickup_location: formData.location,
+        expiry_time: expiryTime.toISOString(),
+        timestamp: now.toISOString(),
+        special_instruction: formData.specialInstructions
+      }, { withCredentials: true });
+      console.log("Test:", response.data);
+      alert('Donation submitted!');
+    }
+    catch (err) {
+      console.log("Submission Error: ", err);
+      navigate("/signin");
+    }
   };
 
   return (

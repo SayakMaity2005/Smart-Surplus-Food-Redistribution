@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from surplus.auth import get_user, create_access_token
 from surplus.database import get_db
 from surplus.security import Hash
-from surplus.schemas import LoginForm
+from surplus.schemas import LoginForm, VerifiedUser
 
 router = APIRouter()
 
@@ -13,7 +13,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 2
 VALIDATION_TIME = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
 ACCESS_TOKEN_EXPIRE_WEEKS = 1
-# VALIDATION_TIME = timedelta(weeks=ACCESS_TOKEN_EXPIRE_WEEKS)
+VALIDATION_TIME = timedelta(weeks=ACCESS_TOKEN_EXPIRE_WEEKS)
 
 @router.post("/login/")
 async def login(response: Response, request: LoginForm, db: Session = Depends(get_db)):
@@ -35,4 +35,9 @@ async def login(response: Response, request: LoginForm, db: Session = Depends(ge
         secure=True,    # in production True (HTTPS only)
         samesite="None"
     )
-    return {"status":"ok","message": "Login successful!"}
+    verifiedUser = VerifiedUser(
+        name=user.name,
+        username=user.username,
+        role=user.role
+    )
+    return {"status":"ok","message": "Login successful!", "user": verifiedUser}

@@ -65,7 +65,7 @@ const SignIn = () => {
             password: formData.password,
           }, { withCredentials: true });  // { withCredentials: true } this the line makes the cookie thing possible
           console.log("Signin Success:", response.data);
-          navigate(response.data.role === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
+          navigate(response.data.user.role === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
         } catch (err) {
           console.log("Signin Error:", err);
         }

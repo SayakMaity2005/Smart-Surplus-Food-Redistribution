@@ -24,11 +24,11 @@ const DonorDashboard = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/verify-session/", {
+        const response = await axios.get("http://localhost:8000/verify-session/", {
           withCredentials: true,
         });
-        setUser(res.data.user);
-        console.log("Session:", res.data);
+        setUser(response.data.user);
+        console.log("Session:", response.data);
       } catch(err) {
         setUser(null);
         navigate('/');
@@ -42,14 +42,14 @@ const DonorDashboard = () => {
   const getUserName = (name: string) => {
     console.log(user?.name);
     let userName = name;
-    for(let i=0; i<name.length; i++) {
-      if(i!=0 && name.charAt(i) === ' ') {
+    for (let i = 0; i < name.length; i++) {
+      if (i != 0 && name.charAt(i) === ' ') {
         userName = name.substring(0, i);
-        break; 
+        break;
       }
     }
     userName = userName.toLowerCase();
-    userName = userName.substring(0,1).toUpperCase() + userName.substring(1);
+    userName = userName.substring(0, 1).toUpperCase() + userName.substring(1);
     return userName;
   };
 

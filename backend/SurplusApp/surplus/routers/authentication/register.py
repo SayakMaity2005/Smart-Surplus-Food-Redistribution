@@ -29,11 +29,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 5
 VALIDATION_TIME = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
 ACCESS_TOKEN_EXPIRE_WEEKS = 1
-# VALIDATION_TIME = timedelta(weeks=ACCESS_TOKEN_EXPIRE_WEEKS)
+VALIDATION_TIME = timedelta(weeks=ACCESS_TOKEN_EXPIRE_WEEKS)
 
 @router.post("/register/")
 async def register(response: Response, request: RegisterForm, db: Session = Depends(get_db)):
-    if request.role == "donor":
+    if request.role == "donate":
         admin = db.query(models.Admin).filter(models.Admin.username == request.username).first()
         if admin:
             raise HTTPException(
@@ -60,7 +60,7 @@ async def register(response: Response, request: RegisterForm, db: Session = Depe
         # message = MessageSchema(
         #     subject="Registration Successful",
         #     recipients=[email],
-        #     body="You Are Successfully Registered!!\nThank you For Registering To Surplus Food Portal\nWelcome To Our New Journey",
+        #     body=f"Dear {request.name},\nYou are successfully registered as Donor!!\nThank you For registering to Surplus Food Portal\nWelcome to our new journey",
         #     subtype="plain"
         # )
         # fm = FastMail(conf)
@@ -93,7 +93,7 @@ async def register(response: Response, request: RegisterForm, db: Session = Depe
         # message = MessageSchema(
         #     subject="Registration Successful",
         #     recipients=[email],
-        #     body="You Are Successfully Registered!!\nThank you For Registering To Surplus Food Portal\nWelcome To Our New Journey",
+        #     body=f"Dear {request.name},\nYou are successfully registered as User!!\nThank you For registering to Surplus Food Portal\nWelcome to our new journey",
         #     subtype="plain"
         # )
         # fm = FastMail(conf)
