@@ -1,20 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Heart, Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Heart, Mail, Phone, Lock, Eye, EyeOff, ArrowLeft, Contact } from 'lucide-react';
 import axios from "axios";
+import { form } from 'framer-motion/client';
+
+type LocationState = {
+  signup: boolean
+  userType: string
+};
 
 const SignIn = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isSignUp, setIsSignUp] = useState(false);
+  const locationState = location.state as LocationState | null;
+  const [isSignUp, setIsSignUp] = useState(locationState?.signup || false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    contact: '',
     password: '',
     confirmPassword: '',
-    userType: location.state?.userType || 'donate'
+    userType: locationState?.userType || 'request',
+    otp: ''
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,46 +43,160 @@ const SignIn = () => {
   //   }
   // };
 
+  const [error, setError] = useState<string>("");
+  const [otpSection, setOtpSection] = useState<Boolean>(false);
+  const [otpSent, setOtpSent] = useState<Boolean>(false);
+  const [loading, setLoading] = useState<Boolean>(false);
+  const [loadMessage, setLoadMessage] = useState<string>("");
+  const [seconds, setSeconds] = useState(60);
+  // const [otpError, setOtpError] = useState<string>("");
+
+  useEffect(() => {
+    if (otpSent && seconds > 0) {
+      const timer = setInterval(() => {
+        setSeconds((prev) => prev - 1);
+      }, 1000);
+
+      return () => clearInterval(timer); // cleanup
+    }
+  }, [seconds, otpSent]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if(loading) return;
 
     try {
       if (isSignUp) {
         console.log("request...");
-        // Sign Up API
+        // Check for validation of registration
         try {
-          const response = await axios.post("http://localhost:8000/register/", {
+          setLoading(true);
+          setLoadMessage("Checking registration request...");
+          const response = await axios.post("http://localhost:8000/check-registration-request/", {
             name: formData.name,
             username: formData.email,
+            contact: formData.contact,
             password: formData.password,
             confirmPassword: formData.confirmPassword,
             role: formData.userType,
-          }, { withCredentials: true });  // { withCredentials: true } this the line makes the cookie thing possible
-          console.log("Signup Success:", response.data);
-          navigate(formData.userType === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
-        } catch (err) {
-          console.log("Signup Error:", err);
+          }, { withCredentials: true });
+          setLoading(false);
+          setError("");
+          setOtpSection(true);
+          console.log("Registration Success:", response.data);
+        } catch (err: any) {
+          setLoading(false);
+          setError(err.response.data["detail"]);
+          console.error("Registration Error:", err);
         }
+        // // Sign Up API
+        // try {
+        //   const response = await axios.post("http://localhost:8000/register/", {
+        //     name: formData.name,
+        //     username: formData.email,
+        //     password: formData.password,
+        //     confirmPassword: formData.confirmPassword,
+        //     role: formData.userType,
+        //   }, { withCredentials: true });  // { withCredentials: true } this the line makes the cookie thing possible
+        //   setError("");
+        //   console.log("Signup Success:", response.data);
+        //   navigate(formData.userType === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
+        // } catch (err: any) {
+        //   setError(err.response.data["detail"]);
+        //   console.log("Signup Error:", err);
+        // }
 
       } else {
         // Sign In API
         console.log("request...");
         try {
+          setLoading(true);
+          setLoadMessage("Logging in...");
           const response = await axios.post("http://localhost:8000/login/", {
             username: formData.email,
             password: formData.password,
           }, { withCredentials: true });  // { withCredentials: true } this the line makes the cookie thing possible
+          setLoading(false);
+          setError("");
           console.log("Signin Success:", response.data);
           navigate(response.data.user.role === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
-        } catch (err) {
-          console.log("Signin Error:", err);
+        } catch (err: any) {
+          setLoading(false);
+          setError(err.response.data["detail"]);
+          console.log("Signin Error:", err.response.data["detail"]);
         }
       }
     } catch (error: any) {
+      setLoading(false);
       console.error("Auth error:", error.response?.data || error.message);
       alert(error.response?.data?.message || "Something went wrong!");
     }
+  };
+
+  const handleOtpRequest = async () => {
+    if(loading) return;
+    try {
+      setLoading(true);
+      setLoadMessage("OTP sending...");
+      const response = await axios.post("http://localhost:8000/generate-otp/", {
+        username: formData.email,
+        name: formData.name,
+        email_subject_otp: "Registration request",
+        email_body_otp: `Dear ${formData.name},\nYour OTP for registration to FoodSurplus is`
+      }, { withCredentials: true });
+      setLoading(false);
+      setError("");
+      setOtpSent(true);
+      setSeconds(60);
+      console.log("OTP Sent:", response.data);
+    } catch (err: any) {
+      setLoading(false);
+      setError(err.response.data["detail"]);
+      setOtpSection(false);
+      setOtpSent(false);
+      setSeconds(60);
+      console.log("OTP Error:", err);
+    }
+  };
+
+  const handleOtpVerification = async () => {
+    if(loading) return;
+    try {
+      setLoading(true);
+      setLoadMessage("Verifying OTP...");
+      const response = await axios.post("http://localhost:8000/verify-otp/", {
+        otp: formData.otp
+      }, { withCredentials: true });
+      setLoading(false);
+      setError("");
+      // Sign Up API
+      try {
+        setLoading(true);
+        setLoadMessage("Creating account...");
+        const response = await axios.post("http://localhost:8000/register/", {
+          name: formData.name,
+          username: formData.email,
+          contact: formData.contact,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          role: formData.userType,
+        }, { withCredentials: true });  // { withCredentials: true } this the line makes the cookie thing possible
+        setLoading(false);
+        setError("");
+        console.log("Signup Success:", response.data);
+        navigate(formData.userType === "donate" ? "/donor-dashboard" : "/recipient-dashboard");
+      } catch (err: any) {
+        setLoading(false);
+        setError(err.response.data["detail"]);
+        console.log("Signup Error:", err);
+      }
+      console.log("OTP Verified:", response.data);
+    } catch (err: any) {
+      setLoading(false);
+      setError(err.response.data["detail"]);
+      console.log("OTP Verification Error:", err);
+    }
+
   };
 
   const handleGoogleSignIn = () => {
@@ -204,6 +327,25 @@ const SignIn = () => {
               </div>
             </div>
 
+            {isSignUp && (<div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Contact Number
+              </label>
+              <div className="relative">
+                <Phone className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2 hover:text-emerald-500 hover:scale-110 transition-all duration-300" />
+                <input
+                  type="number"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleInputChange}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter your contact number"
+                  required
+                />
+              </div>
+            </div>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Password
@@ -249,7 +391,17 @@ const SignIn = () => {
               </div>
             )}
 
-            <motion.button
+
+
+            {(error != "") && !otpSection && (
+              <p className="err-msg text-center text-red-500 text-base font-normal mt-1">{error}</p>
+            )}
+
+            {loading && !otpSent && !otpSection && (
+              <p className="my-2 text-center text-gray-500 text-base font-normal mt-1"> {loadMessage}</p>
+            )}
+
+            {!otpSection && (<motion.button
               type="submit"
               className={`w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 transform hover:scale-105 ${formData.userType === 'donate'
                 ? 'bg-orange-500 hover:bg-orange-600'
@@ -259,8 +411,57 @@ const SignIn = () => {
               whileTap={{ scale: 0.98 }}
             >
               {isSignUp ? 'Create Account' : 'Sign In'}
-            </motion.button>
+            </motion.button>)}
           </form>
+
+          {otpSection && isSignUp && (
+            <div className="mt-6">
+              {otpSent && (<div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  OTP
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="otp"
+                    value={formData.otp}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
+                    placeholder="Enter OTP"
+                    required={isSignUp}
+                  />
+                </div>
+              </div>)}
+              {otpSent && (
+                <div>
+                  <div className="flex items-center my-3">
+                    <button onClick={(seconds > 0) ? undefined : handleOtpRequest} className={(seconds > 0) ? "text-sm my-3 mx-2 text-gray-500" : "text-sm my-3 text-blue-500"}>Resend OTP</button>
+                    {seconds > 0 && (<p> in {seconds}s</p>)}
+                  </div>
+                  {loading && (
+                    <p className="my-2 text-center text-gray-500 text-base font-normal mt-1"> {loadMessage}</p>
+                  )}
+                  {(error != "") && otpSection && (
+                    <p className="err-msg text-center text-red-500 text-base font-normal mt-1">{error}</p>
+                  )}
+                  <button onClick={handleOtpVerification} className="mt-1 w-full py-3 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-all duration-300">
+                    Verify OTP
+                  </button>
+                </div>
+              )}
+              {loading && !otpSent && (
+                <p className="my-2 text-center text-gray-500 text-base font-normal mt-1"> {loadMessage}</p>
+              )}
+              {(error != "") && !otpSent && otpSection && (
+                <p className="err-msg text-center text-red-500 text-base font-normal mt-1">{error}</p>
+              )}
+
+              {!otpSent && (<button onClick={handleOtpRequest} className="mt-1 w-full py-3 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-all duration-300">
+                Send OTP
+              </button>)}
+
+            </div>
+          )}
 
           <div className="my-6 flex items-center">
             <div className="border-t border-gray-300 flex-1"></div>

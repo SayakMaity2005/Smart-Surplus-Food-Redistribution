@@ -6,3 +6,7 @@ python-jose
 python-multipart
 fastapi-mail
 python-dotenv
+cloudinary
+pillow
+apscheduler
+alembic

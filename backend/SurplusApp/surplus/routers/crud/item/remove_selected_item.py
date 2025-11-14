@@ -1,0 +1,90 @@
+from datetime import datetime, timezone
+from fastapi import APIRouter, Depends, Request, HTTPException, status
+from sqlalchemy.orm import Session
+from surplus.auth import get_current_user
+from surplus.database import get_db
+from surplus.mail_config import configuration
+from surplus import models
+from surplus.schemas import EditItemForm, CheckEdit
+from surplus.routers.authentication.verify_session import verify_session
+from surplus.routers.crud.item.destroy_image import destroy_image
+from fastapi_mail import FastMail,MessageSchema,ConnectionConfig
+import smtplib
+
+router = APIRouter()
+
+@router.post("/admin/remove-selected-item/")
+async def remove_selected_item(request: CheckEdit, request_cookie: Request, db: Session = Depends(get_db)):
+    token = request_cookie.cookies.get("surplus_access_token")
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not logged in")
+    current_admin = await get_current_user(token, db)
+    if not current_admin:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized")
+    if current_admin.role != "donate":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized to edit item")
+
+    item = db.query(models.SelectedItem).filter(models.SelectedItem.id == request.id).first()
+    if not item:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
+    if item.admin_id != current_admin.id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized to remove item")
+    is_item_removed = False
+    user = None
+    if item.user_id:
+        # user notification
+        new_user_notification = models.UserNotification(
+            message = f"Your selected item {item.title} has been removed by {current_admin.name}",
+            seen = False,
+            timestamp =  datetime.now(timezone.utc).isoformat(),
+            user = item.user
+        )
+        db.add(new_user_notification)
+        db.commit()
+        db.refresh(new_user_notification)
+        is_item_removed = True
+        user = db.query(models.User).filter(models.User.id == item.user_id).first()
+
+    # update daily data
+    curr_admin_daily_data = db.query(models.DailyData).filter(models.DailyData.admin_id == current_admin.id).all()
+    curr_admin_today_data = None
+    for daily_data in curr_admin_daily_data:
+        date = datetime.fromisoformat(daily_data.date.replace("Z", "+00:00")).astimezone(timezone.utc).date()
+        added_date = datetime.fromisoformat(item.timestamp.replace("Z", "+00:00")).astimezone(timezone.utc).date()
+        if date == added_date:
+            curr_admin_today_data = daily_data
+            break
+    if curr_admin_today_data:
+        if curr_admin_today_data.items_provided > 0: curr_admin_today_data.items_provided -= 1
+        db.commit()
+
+    # remove item
+    image_destroy_response = "None"
+    image_destroy_response = await destroy_image(item.image_url)
+    db.delete(item)
+    db.commit()
+
+
+    if is_item_removed and user:
+        # update user current data
+        curr_user_current_data = db.query(models.UserCurrentData).filter(models.UserCurrentData.user_id == item.user_id).first()
+        if curr_user_current_data:
+            curr_user_current_data.active_requests -= 1 if curr_user_current_data.active_requests > 0 else 0
+            db.commit()
+        # Mail Sending --------------------------------------- ##
+        email = str(user.username)
+        message = MessageSchema(
+            subject="Selected Item Removed",
+            recipients=[email],
+            body=f"Dear {user.name},\nYour selected food item {item.title} has been removed by {current_admin.name}.",
+            subtype="plain"
+        )
+        try:
+            fm = FastMail(configuration)
+            await fm.send_message(message)
+        except smtplib.SMTPRecipientsRefused:
+            raise HTTPException(status_code=400, detail="Invalid email address")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Email sending failed: {str(e)}")
+
+    return {"message": "Item removed successfully", "image_destroy_response": image_destroy_response}
