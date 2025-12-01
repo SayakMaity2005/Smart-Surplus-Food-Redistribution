@@ -821,7 +821,8 @@ const DonorDashboard = () => {
                   <MapPin className="w-5 h-5 text-orange-600 hover:scale-110 transition-transform duration-300" />
                   <span className="font-medium text-orange-700">Find Pickup Locations</span>
                 </button>
-                <button className="w-full flex items-center space-x-3 p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200" onClick={() => navigate('/impact-report')}>
+                {/* <button className="w-full flex items-center space-x-3 p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200" onClick={() => navigate('/impact-report')}> */}
+                <button className="w-full flex items-center space-x-3 p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200">
                   <span className="flex items-center">
                     <Users className="w-5 h-5 text-blue-600 hover:scale-110 transition-transform duration-300" />
                     <span className="font-medium text-blue-700 ml-2">View Impact Report</span>

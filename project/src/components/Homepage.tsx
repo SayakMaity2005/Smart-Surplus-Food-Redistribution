@@ -19,17 +19,25 @@ import {
   Handshake,
   Target,
   Award,
+  Medal,
   Utensils, // for meals
   Users as UsersIcon, // for people helped
   CalendarCheck // for monthly meals
 } from 'lucide-react';
 import axios from "axios";
+import userProfileIconImage from "../assets/user-profile-icon-circle-digital-ui.jpg"
 
 interface User {
   name: string
   username: string
   role: string
 };
+interface TopAdmin {
+  name: string
+  profile_pic_url: string
+  impact_score: number
+  items_provided_in_month: number
+}
 
 const Homepage = () => {
   const navigate = useNavigate();
@@ -37,6 +45,7 @@ const Homepage = () => {
   const [dailyMeals, setDailyMeals] = useState(0);
   const [monthlyMeals, setMonthlyMeals] = useState(0);
   const [impactScore, setImpactScore] = useState(0);
+  const [topAdmins, setTopAdmins] = useState<TopAdmin[]>([]);
 
   const [user, setUser] = useState<User | null>(null);
 
@@ -77,7 +86,7 @@ const Homepage = () => {
     checkSession();
   }, [user]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const getData = async () => {
       try {
         const response = await axios.get("http://localhost:8000/home/get-stat-data/", {
@@ -94,14 +103,23 @@ const Homepage = () => {
       } catch (err) {
         console.log(err);
       }
+      try {
+        const response = await axios.post("http://localhost:8000/home/get-top-n-admins/", { num_admin: 5 }, {
+          withCredentials: true
+        });
+        setTopAdmins(response.data.data);
+        console.log(response.data);
+      } catch (err) {
+        console.log(err);
+      }
     };
 
     getData();
-  },[]);
+  }, []);
 
-  useEffect(() => {
+  // useEffect(() => {
 
-  }, [])
+  // }, [])
 
   // Animated counters
   // useEffect(() => {
@@ -154,6 +172,33 @@ const Homepage = () => {
     if (type == 'login') navigate('/signin');
     else navigate('/signin', { state: { signup: true, userType: type } });
   };
+
+  const container = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: 0.15,
+      },
+    },
+  };
+
+  const cardAnim = {
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.45, ease: "easeOut" },
+    },
+  };
+
+  const medalColors = [
+    "from-yellow-300 to-yellow-500",  // 🥇 Gold
+    "from-gray-300 to-gray-500",      // 🥈 Silver
+    "from-amber-500 to-amber-700",     // 🥉 Bronze
+    "from-teal-400 to-teal-600",
+    "from-purple-400 to-purple-600",
+  ];
 
   return (
     <div className="min-h-screen">
@@ -365,7 +410,7 @@ const Homepage = () => {
                 <UsersIcon className="w-14 h-14 text-orange-300 group-hover:text-orange-500 transition-colors duration-300 drop-shadow-lg" />
               </div>
               <div className="text-5xl md:text-6xl font-extrabold text-white mb-2 group-hover:text-orange-100 transition-colors duration-300 tracking-tight drop-shadow-lg">
-                {impactScore.toLocaleString()}%
+                {impactScore.toFixed(2)}%
               </div>
               <div className="text-emerald-100 text-lg font-bold group-hover:text-orange-200 transition-colors duration-300 uppercase tracking-wide">Our Impact</div>
             </motion.div>
@@ -373,8 +418,82 @@ const Homepage = () => {
         </div>
       </section>
 
-      {/* Success Stories */}
+      {/* Top 5 admins */}
       <section className="py-20 bg-gray-50">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Top Donors</h2>
+          <p className="text-xl text-gray-600">Real impact from our community partners</p>
+        </motion.div>
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 py-6 px-4"
+        >
+          {topAdmins.map((admin, index) => (
+            <motion.div
+            key={index}
+              variants={container}
+              initial="hidden"
+              animate="show"
+              className="
+            rounded-3xl p-2 flex flex-col items-center relative
+            bg-white/10 backdrop-blur-2xl 
+            border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.25)]
+            hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]
+            transition-all duration-300
+          "
+            >
+              {/* Medal Badge */}
+              <div
+                className={`
+              absolute -top-4 right-4 px-3 py-1 text-xs font-semibold 
+              rounded-full text-white shadow-lg 
+              bg-gradient-to-r ${medalColors[index]}
+            `}
+              >
+                {["🥇", "🥈", "🥉", "⭐", "✨"][index]} #{index + 1}
+              </div>
+
+              {/* Profile Image */}
+              <div className="w-20 h-20 rounded-full overflow-hidden border border-white/30 shadow-xl">
+                <img
+                  src={admin.profile_pic_url===""? userProfileIconImage : admin.profile_pic_url}
+                  alt={admin.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Name */}
+              <h3 className="mt-3 text-lg font-semibold text-gray-500 tracking-tight">
+                {admin.name}
+              </h3>
+
+              {/* Stats Box */}
+              <div className="mt-5 w-full space-y-2">
+                <div className="flex justify-center items-center bg-white/10 backdrop-blur-xl px-4 rounded-xl border border-black/10">
+                  <span className="text-gray/70 m-2 text-xs">Impact Score</span>
+                  <span className="text-yellow-300 font-semibold text-sm">{admin.impact_score.toFixed(2)}</span>
+                </div>
+
+                <div className="flex justify-center items-center bg-white/10 backdrop-blur-xl px-4 rounded-xl border border-black/10">
+                  <span className="text-gray/70 m-2 text-xs">Items Provided</span>
+                  <span className="text-orange-300 font-semibold text-sm">{admin.items_provided_in_month}</span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </section>
+
+
+      {/* Success Stories */}
+      {/* <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
@@ -443,9 +562,10 @@ const Homepage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Get Involved */}
+      {/*       
       <section id="volunteers" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -468,7 +588,7 @@ const Homepage = () => {
               transition={{ duration: 0.6 }}
               whileHover={{ scale: 1.03 }}
             >
-              {/* Background gradient and image overlay */}
+              {/* Background gradient and image overlay 
               <div className="absolute inset-0 z-0 bg-gradient-to-br from-orange-100 via-orange-200 to-emerald-100 opacity-90" />
               <div
                 className="absolute inset-0 z-0"
@@ -480,7 +600,7 @@ const Homepage = () => {
                   filter: 'blur(2px)'
                 }}
               />
-              {/* Glassmorphism effect */}
+              {/* Glassmorphism effect 
               <div className="relative z-10 flex flex-col items-center justify-center w-full h-full p-12 md:p-24 bg-white/40 backdrop-blur-md rounded-3xl border border-orange-200 shadow-2xl">
                 <div className="flex items-center justify-center mb-12">
                   <span className="inline-flex items-center justify-center rounded-full bg-orange-100 shadow-lg p-6 border-4 border-orange-200">
@@ -520,7 +640,7 @@ const Homepage = () => {
             </motion.div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
       <footer id="contact" className="bg-gray-900 text-white py-16">

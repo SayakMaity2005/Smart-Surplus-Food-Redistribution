@@ -38,7 +38,8 @@ async def remove_expired_item(db: Session = Depends(get_db)):
                     quantity += selected_item.quantity
                     if selected_item.user_id:
                         # update user_current_data
-                        curr_user_current_data = db.query(models.UserCurrentData).filter(models.UserCurrentData.user_id == item.user_id).first()
+                        # change in college from item to selected_item line 42
+                        curr_user_current_data = db.query(models.UserCurrentData).filter(models.UserCurrentData.user_id == selected_item.user_id).first()
                         if curr_user_current_data:
                             curr_user_current_data.active_requests -= 1 if curr_user_current_data.active_requests > 0 else 0
                             db.commit()

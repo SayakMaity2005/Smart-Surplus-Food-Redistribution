@@ -9,6 +9,9 @@ from surplus import models
 from surplus.database import get_db
 from sqlalchemy.orm import Session
 
+from dotenv import load_dotenv
+load_dotenv()
+
 SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ALGORITHM = "HS256"
 

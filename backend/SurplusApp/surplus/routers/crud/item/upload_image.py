@@ -5,10 +5,12 @@ import os
 from PIL import Image
 import cloudinary.uploader
 import tempfile
+from dotenv import load_dotenv
+load_dotenv()
 
-CLOUD_NAME = "das5u9tjg"
-API_KEY = "812321471543311"
-API_SECRET = "DE297QSdbRgO3mLTk7vyNfY458E"
+CLOUD_NAME = os.getenv("CLOUD_NAME")
+API_KEY = os.getenv("API_KEY")
+API_SECRET = os.getenv("API_SECRET")
 
 cloudinary.config(
     cloud_name=CLOUD_NAME,

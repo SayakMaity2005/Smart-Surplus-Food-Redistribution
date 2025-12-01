@@ -7,6 +7,7 @@ from surplus.routers.crud.stat_data import get_daily_stat_data, get_daily_user_s
 from surplus.routers.crud.notification import get_admin_notification, get_user_notification, make_notification_seen
 from surplus.routers.crud.event import add_event, get_all_events, remove_event
 from surplus.routers.crud.home import get_stat_data
+from surplus.routers.crud.home import get_top_n_admins
 from surplus.routers.crud.profile import get_profile, edit_profile, discard_profile_edit, delete_profile_pic
 from surplus.routers.background_scheduler import auto_background_scheduler
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -54,6 +55,7 @@ app.include_router(add_event.router)
 app.include_router(get_all_events.router)
 app.include_router(remove_event.router)
 app.include_router(get_stat_data.router)
+app.include_router(get_top_n_admins.router)
 app.include_router(get_profile.router)
 app.include_router(edit_profile.router)
 app.include_router(discard_profile_edit.router)
