@@ -8,6 +8,7 @@ async def logout():
     response = JSONResponse(content={"status": "ok", "message": "Logout successful!"})
     response.delete_cookie(
         key="surplus_access_token",
+        httponly=True,
         path="/",
         samesite="None",
         secure=True

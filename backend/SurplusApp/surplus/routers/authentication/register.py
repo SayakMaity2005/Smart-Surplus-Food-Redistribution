@@ -139,7 +139,8 @@ async def register(response: Response, request: RegisterForm, db: Session = Depe
         value=access_token,
         httponly=True,   # JS can't read
         secure=True,    # in production True (HTTPS only)
-        samesite="None"
+        samesite="None",
+        path="/"  # Ensure the cookie is accessible across the app
     )
     return {"status":"ok","message": "Registration successful!"}
     # return Token(access_token=access_token, token_type="bearer")

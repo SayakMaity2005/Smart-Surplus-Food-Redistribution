@@ -10,3 +10,4 @@ cloudinary
 pillow
 apscheduler
 alembic
+psycopg2-binary
