@@ -7,7 +7,7 @@ resend.api_key = os.getenv("RESEND_API_KEY")
 
 def send_email(to, subject, body):
     params = {
-        "from": "Surplus App <no-reply@surplus.app>",
+        "from": "Surplus App <onboarding@resend.dev>",
         "to": [to],
         "subject": subject,
         "text": body
