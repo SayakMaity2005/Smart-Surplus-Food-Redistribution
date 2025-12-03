@@ -10,6 +10,7 @@ from fastapi_mail import FastMail,MessageSchema,ConnectionConfig
 from dotenv import load_dotenv
 import os
 import smtplib
+from surplus.routers.mail_service.send_email import send_email
 
 load_dotenv()
 
@@ -65,20 +66,28 @@ async def register(response: Response, request: RegisterForm, db: Session = Depe
         db.refresh(new_admin)
 
         # Mail Sending --------------------------------------- ##
-        email = str(request.username)    
-        message = MessageSchema(
-            subject="Registration Successful",
-            recipients=[email],
-            body=f"Dear {request.name},\nYou are successfully registered as Donor!!\nThank you For registering to Surplus Food Portal\nWelcome to our new journey",
-            subtype="plain"
-        )
+        # email = str(request.username)    
+        # message = MessageSchema(
+        #     subject="Registration Successful",
+        #     recipients=[email],
+        #     body=f"Dear {request.name},\nYou are successfully registered as Donor!!\nThank you For registering to Surplus Food Portal\nWelcome to our new journey",
+        #     subtype="plain"
+        # )
+        # try:
+        #     fm = FastMail(conf)
+        #     await fm.send_message(message)
+        # except smtplib.SMTPRecipientsRefused:
+        #     raise HTTPException(status_code=400, detail="Invalid email address")
+        # except Exception as e:
+        #     raise HTTPException(status_code=500, detail=f"Email sending failed: {str(e)}")
         try:
-            fm = FastMail(conf)
-            await fm.send_message(message)
-        except smtplib.SMTPRecipientsRefused:
-            raise HTTPException(status_code=400, detail="Invalid email address")
+            send_email(
+                str(request.username),
+                "Registration Successful", 
+                f"Dear {request.name},\nYou are successfully registered as Donor!!\nThank you For registering to Surplus Food Portal\nWelcome to our new journey"
+            )
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Email sending failed: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Email sending failed: Unknown Network Error [{str(e)}]")
         
         # admin notification
         new_notification = models.AdminNotification(
@@ -104,20 +113,29 @@ async def register(response: Response, request: RegisterForm, db: Session = Depe
         db.refresh(new_user)
 
         #Mail Sending --------------------------------------- ##
-        email = str(request.username)    
-        message = MessageSchema(
-            subject="Registration Successful",
-            recipients=[email],
-            body=f"Dear {request.name},\nYou are successfully registered as User!!\nThank you For registering to Surplus Food Portal\nWelcome to our new journey",
-            subtype="plain"
-        )
+        # email = str(request.username)    
+        # message = MessageSchema(
+        #     subject="Registration Successful",
+        #     recipients=[email],
+        #     body=f"Dear {request.name},\nYou are successfully registered as User!!\nThank you For registering to Surplus Food Portal\nWelcome to our new journey",
+        #     subtype="plain"
+        # )
+        # try:
+        #     fm = FastMail(conf)
+        #     await fm.send_message(message)
+        # except smtplib.SMTPRecipientsRefused:
+        #     raise HTTPException(status_code=400, detail="Invalid email address")
+        # except Exception as e:
+        #     raise HTTPException(status_code=500, detail=f"Email sending failed: Unknown Network Error")
+
         try:
-            fm = FastMail(conf)
-            await fm.send_message(message)
-        except smtplib.SMTPRecipientsRefused:
-            raise HTTPException(status_code=400, detail="Invalid email address")
+            send_email(
+                str(request.username),
+                "Registration Successful", 
+                f"Dear {request.name},\nYou are successfully registered as Receiver!!\nThank you For registering to Surplus Food Portal\nWelcome to our new journey"
+            )
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Email sending failed: Unknown Network Error")
+            raise HTTPException(status_code=500, detail=f"Email sending failed: Unknown Network Error [{str(e)}]")
         
         # user notification
         new_notification = models.UserNotification(
