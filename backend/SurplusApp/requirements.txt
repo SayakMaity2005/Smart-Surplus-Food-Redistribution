@@ -14,4 +14,3 @@ apscheduler
 alembic
 psycopg2-binary
 resend
-sib_api_v3_sdk
