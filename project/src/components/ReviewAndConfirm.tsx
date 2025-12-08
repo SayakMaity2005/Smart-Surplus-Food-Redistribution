@@ -45,7 +45,7 @@ const ReviewItem: React.FC = () => {
         try {
             setLoading(true);
             setLoadingMessage("Confirming your selection...");
-            const res = await axios.post("http://localhost:8000/user/select-item/", {
+            const res = await axios.post("https://smart-surplus-food-redistribution.onrender.com/user/select-item/", {
                 item_id: item.id,
                 quantity: quantity,
             }, {withCredentials: true});

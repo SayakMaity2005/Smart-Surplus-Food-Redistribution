@@ -60,7 +60,7 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, item }) => {
         const checkSessionGetData = async () => {
             try {
                 // Session Cheack
-                const sessionResponse = await axios.get("http://localhost:8000/verify-session/", {
+                const sessionResponse = await axios.get("https://smart-surplus-food-redistribution.onrender.com/verify-session/", {
                     withCredentials: true,
                 });
                 setUser(sessionResponse.data.user);
@@ -91,7 +91,7 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, item }) => {
         try {
             setLoading(true);
             setLoadMessage("OTP sending...");
-            const response = await axios.post("http://localhost:8000/generate-otp/", {
+            const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/generate-otp/", {
                 username: item.user_username,
                 name: item.user_name,
                 email_subject_otp: "Pickup Confirmation request",
@@ -116,7 +116,7 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, item }) => {
         try {
             setLoading(true);
             setLoadMessage("Verifying OTP...");
-            const response = await axios.post("http://localhost:8000/verify-otp/", {
+            const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/verify-otp/", {
                 otp: otpData
             }, { withCredentials: true });
             setLoading(false);
@@ -125,7 +125,7 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, item }) => {
             try {
                 setLoading(true);
                 setLoadMessage("Confirming item...");
-                const response = await axios.post("http://localhost:8000/admin/confirm-donation/", {
+                const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/admin/confirm-donation/", {
                     item_id: item.id,
                     user_id: item.user_id,
                     user_name: item.user_name,

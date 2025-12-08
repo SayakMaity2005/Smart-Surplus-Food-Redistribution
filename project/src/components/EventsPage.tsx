@@ -45,13 +45,13 @@ const EventsPage: React.FC = () => {
     const checkSessionGetData = async () => {
       try {
         // Session Cheack
-        const sessionResponse = await axios.get("http://localhost:8000/verify-session/", {
+        const sessionResponse = await axios.get("https://smart-surplus-food-redistribution.onrender.com/verify-session/", {
           withCredentials: true,
         });
         setUser(sessionResponse.data.user);
         console.log("Session:", sessionResponse.data);
         // Get data
-        const dataResponse = await axios.get("http://localhost:8000/admin/get-all-events/", {
+        const dataResponse = await axios.get("https://smart-surplus-food-redistribution.onrender.com/admin/get-all-events/", {
           withCredentials: true,
         });
         // sorting according to date
@@ -79,7 +79,7 @@ const EventsPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8000/admin/add-event/", {
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/admin/add-event/", {
         title: formData.title,
         description: formData.description,
         location: formData.location,
@@ -98,7 +98,7 @@ const EventsPage: React.FC = () => {
   const handleRemoveItem = async (event: Event) => {
     setTriggeredEvent(null);
     try {
-      const response = await axios.post("http://localhost:8000/admin/remove-event/", {
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/admin/remove-event/", {
         event_id: event.id
       }, { withCredentials: true });
       console.log("Event Removed:", response.data);

@@ -59,7 +59,7 @@ const EditItem: React.FC = () => {
     useEffect(() => {
         const checkSession = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/verify-session/", {
+                const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/verify-session/", {
                     withCredentials: true,
                 });
                 setUser(response.data.user);
@@ -88,7 +88,7 @@ const EditItem: React.FC = () => {
             setLoadingMessage("Confirming edit...");
             const now = new Date();
             const expiryTime = addHours(now, Number(formData.safeToEatHours));
-            const response = await axios.post("http://localhost:8000/admin/edit-item/", {
+            const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/admin/edit-item/", {
                 id: oldItem.id,
                 title: formData.title,
                 type: formData.type,
@@ -138,7 +138,7 @@ const EditItem: React.FC = () => {
         try {
             setLoading(true);
             setLoadingMessage("Uploading image...");
-            const response = await axios.post("http://localhost:8000/upload-image/", formData, {
+            const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/upload-image/", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
                 withCredentials: true,
             });

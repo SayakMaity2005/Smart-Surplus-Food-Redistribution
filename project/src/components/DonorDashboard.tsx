@@ -77,7 +77,7 @@ interface ProfileData {
 const DonorDashboard = () => {
   const navigate = useNavigate();
   const handleLogout = async () => {
-    const response = await axios.post("http://localhost:8000/logout/");
+    const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/logout/");
     console.log("Signout Success:", response.data);
     navigate('/'); // Redirect to homepage or login
   };
@@ -116,19 +116,19 @@ const DonorDashboard = () => {
     const checkSession = async () => {
       // // Remove expired items
       // try {
-      //   const res = await axios.get("http://localhost:8000/remove-expired-item/", { withCredentials: true });
+      //   const res = await axios.get("https://smart-surplus-food-redistribution.onrender.com/remove-expired-item/", { withCredentials: true });
       //   console.log(res.data);
       // } catch (err) {
       //   console.log(err);
       // }
 
       try {
-        const response = await axios.get("http://localhost:8000/verify-session/", {
+        const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/verify-session/", {
           withCredentials: true,
         });
         setUser(response.data.user);
         console.log("Session:", response.data);
-        const dataResponse = await axios.get("http://localhost:8000/admin/get-added-items/", {
+        const dataResponse = await axios.get("https://smart-surplus-food-redistribution.onrender.com/admin/get-added-items/", {
           withCredentials: true,
         });
         setAddedItems(dataResponse.data.data.items);
@@ -142,7 +142,7 @@ const DonorDashboard = () => {
       }
 
       try {
-        const response = await axios.get("http://localhost:8000/admin/get-daily-stat-data/", {
+        const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/admin/get-daily-stat-data/", {
           withCredentials: true,
         });
         setDailyStatData(response.data.data.daily_data);
@@ -157,7 +157,7 @@ const DonorDashboard = () => {
 
       // checking notification state
       try {
-        const notificationsResponse = await axios.get("http://localhost:8000/admin/get-admin-notification/", { withCredentials: true, });
+        const notificationsResponse = await axios.get("https://smart-surplus-food-redistribution.onrender.com/admin/get-admin-notification/", { withCredentials: true, });
         // setNotifications(notificationsResponse.data.data);
         setIsUnseen(notificationsResponse.data.isUnseen);
         console.log("Notifications:", notificationsResponse.data);
@@ -210,7 +210,7 @@ const DonorDashboard = () => {
     setProfilePopup(true);
     if (profileData) return;
     try {
-      const response = await axios.get("http://localhost:8000/profile/get-profile/", { withCredentials: true, });
+      const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/profile/get-profile/", { withCredentials: true, });
       // setNotifications(notificationsResponse.data.data);
       setProfileData(response.data.data);
       setProfileFormData(response.data.data);
@@ -223,7 +223,7 @@ const DonorDashboard = () => {
     setProfileEditPopup(true);
     if (profileData) return;
     try {
-      const response = await axios.get("http://localhost:8000/profile/get-profile/", { withCredentials: true, });
+      const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/profile/get-profile/", { withCredentials: true, });
       // setNotifications(notificationsResponse.data.data);
       setProfileData(response.data.data);
       setProfileFormData(response.data.data);
@@ -258,7 +258,7 @@ const DonorDashboard = () => {
     try {
       setLoading(true);
       setLoadingMessage("Uploading image...");
-      const response = await axios.post("http://localhost:8000/upload-image/", formData, {
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/upload-image/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
@@ -289,7 +289,7 @@ const DonorDashboard = () => {
     try {
       setLoading(true);
       setLoadingMessage("Discarding changes...");
-      const response = await axios.post("http://localhost:8000/profile/discard-profile-edit/",
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/profile/discard-profile-edit/",
         { profile_pic_url: imageUrl ? imageUrl : "" },
         { withCredentials: true },
       );
@@ -314,7 +314,7 @@ const DonorDashboard = () => {
     try {
       setLoading(true);
       setLoadingMessage("Discarding changes...");
-      const response = await axios.post("http://localhost:8000/profile/edit-profile/",
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/profile/edit-profile/",
         {
           profile_pic_url: imageUrl ? imageUrl : "",
           name: profileFormData?.name,
@@ -343,7 +343,7 @@ const DonorDashboard = () => {
     try {
       setLoading(true);
       setLoadingMessage("Deleting profile picture...");
-      const response = await axios.get("http://localhost:8000/profile/delete-profile-pic/",
+      const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/profile/delete-profile-pic/",
         { withCredentials: true },
       );
       setProfileData(null);

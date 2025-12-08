@@ -126,7 +126,7 @@ const RecipientDashboard = () => {
     const checkSession = async () => {
       // // Remove expired items
       // try {
-      //   const res = await axios.get("http://localhost:8000/remove-expired-item/", { withCredentials: true });
+      //   const res = await axios.get("https://smart-surplus-food-redistribution.onrender.com/remove-expired-item/", { withCredentials: true });
       //   console.log(res.data);
       // } catch (err) {
       //   console.log(err);
@@ -134,7 +134,7 @@ const RecipientDashboard = () => {
 
       try {
         // Session Cheack
-        const res = await axios.get("http://localhost:8000/verify-session/", {
+        const res = await axios.get("https://smart-surplus-food-redistribution.onrender.com/verify-session/", {
           withCredentials: true,
         });
         setUser(res.data.user);
@@ -147,7 +147,7 @@ const RecipientDashboard = () => {
       }
       try {
         // Get items
-        const res = await axios.get("http://localhost:8000/user/get-all-items/", {
+        const res = await axios.get("https://smart-surplus-food-redistribution.onrender.com/user/get-all-items/", {
           withCredentials: true,
         });
         setItem(res.data.data);
@@ -157,7 +157,7 @@ const RecipientDashboard = () => {
       }
       try {
         // Get selected items
-        const res = await axios.get("http://localhost:8000/user/get-selected-items-user/", {
+        const res = await axios.get("https://smart-surplus-food-redistribution.onrender.com/user/get-selected-items-user/", {
           withCredentials: true,
         });
         setSelectedItem(res.data.data);
@@ -167,7 +167,7 @@ const RecipientDashboard = () => {
       }
 
       try {
-        const response = await axios.get("http://localhost:8000/user/get-daily-user-stat-data/", {
+        const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/user/get-daily-user-stat-data/", {
           withCredentials: true,
         });
         setUserDailyStatData(response.data.data.daily_data);
@@ -178,7 +178,7 @@ const RecipientDashboard = () => {
       }
 
       try {
-        const response = await axios.get("http://localhost:8000/user/get-user-current-data/", {
+        const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/user/get-user-current-data/", {
           withCredentials: true,
         });
         setUserCurrentData(response.data.data);
@@ -189,7 +189,7 @@ const RecipientDashboard = () => {
 
       // checking notification state
       try {
-        const notificationsResponse = await axios.get("http://localhost:8000/user/get-user-notification/", { withCredentials: true, });
+        const notificationsResponse = await axios.get("https://smart-surplus-food-redistribution.onrender.com/user/get-user-notification/", { withCredentials: true, });
         // setNotifications(notificationsResponse.data.data);
         setIsUnseen(notificationsResponse.data.isUnseen);
         console.log("Notifications:", notificationsResponse.data);
@@ -223,7 +223,7 @@ const RecipientDashboard = () => {
     navigate("/review-item", { state: { item: triggeredItem } });
     // try {
     //   setSelectingItem(true);
-    //   const res = await axios.post("http://localhost:8000/user/select-item/", {
+    //   const res = await axios.post("https://smart-surplus-food-redistribution.onrender.com/user/select-item/", {
     //     item_id: itemId,
     //   },
     //     {
@@ -255,7 +255,7 @@ const RecipientDashboard = () => {
     setProfilePopup(true);
     if (profileData) return;
     try {
-      const response = await axios.get("http://localhost:8000/profile/get-profile/", { withCredentials: true, });
+      const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/profile/get-profile/", { withCredentials: true, });
       // setNotifications(notificationsResponse.data.data);
       setProfileData(response.data.data);
       setProfileFormData(response.data.data);
@@ -268,7 +268,7 @@ const RecipientDashboard = () => {
     setProfileEditPopup(true);
     if (profileData) return;
     try {
-      const response = await axios.get("http://localhost:8000/profile/get-profile/", { withCredentials: true, });
+      const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/profile/get-profile/", { withCredentials: true, });
       // setNotifications(notificationsResponse.data.data);
       setProfileData(response.data.data);
       setProfileFormData(response.data.data);
@@ -303,7 +303,7 @@ const RecipientDashboard = () => {
     try {
       setLoading(true);
       setLoadingMessage("Uploading image...");
-      const response = await axios.post("http://localhost:8000/upload-image/", formData, {
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/upload-image/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
@@ -334,7 +334,7 @@ const RecipientDashboard = () => {
     try {
       setLoading(true);
       setLoadingMessage("Discarding changes...");
-      const response = await axios.post("http://localhost:8000/profile/discard-profile-edit/",
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/profile/discard-profile-edit/",
         { profile_pic_url: imageUrl ? imageUrl : "" },
         { withCredentials: true },
       );
@@ -359,7 +359,7 @@ const RecipientDashboard = () => {
     try {
       setLoading(true);
       setLoadingMessage("Discarding changes...");
-      const response = await axios.post("http://localhost:8000/profile/edit-profile/",
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/profile/edit-profile/",
         {
           profile_pic_url: imageUrl ? imageUrl : "",
           name: profileFormData?.name,
@@ -388,7 +388,7 @@ const RecipientDashboard = () => {
     try {
       setLoading(true);
       setLoadingMessage("Deleting profile picture...");
-      const response = await axios.get("http://localhost:8000/profile/delete-profile-pic/",
+      const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/profile/delete-profile-pic/",
         { withCredentials: true },
       );
       setProfileData(null);
@@ -463,7 +463,7 @@ const RecipientDashboard = () => {
   ];
 
   const handleLogout = async () => {
-    const response = await axios.post("http://localhost:8000/logout/");
+    const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/logout/");
     console.log("Signout Success:", response.data);
     navigate('/');
   };

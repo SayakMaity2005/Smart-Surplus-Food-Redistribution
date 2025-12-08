@@ -100,20 +100,20 @@ const FoodItemsList: React.FC = () => {
     const checkSessionGetData = async () => {
       // // Remove expired items
       // try {
-      //   const res = await axios.get("http://localhost:8000/remove-expired-item/", { withCredentials: true });
+      //   const res = await axios.get("https://smart-surplus-food-redistribution.onrender.com/remove-expired-item/", { withCredentials: true });
       //   console.log(res.data);
       // } catch (err) {
       //   console.log(err);
       // }
       try {
         // Session Cheack
-        const sessionResponse = await axios.get("http://localhost:8000/verify-session/", {
+        const sessionResponse = await axios.get("https://smart-surplus-food-redistribution.onrender.com/verify-session/", {
           withCredentials: true,
         });
         setUser(sessionResponse.data.user);
         console.log("Session:", sessionResponse.data);
         // Get data
-        const dataResponse = await axios.get("http://localhost:8000/admin/get-added-items/", {
+        const dataResponse = await axios.get("https://smart-surplus-food-redistribution.onrender.com/admin/get-added-items/", {
           withCredentials: true,
         });
         setItem(dataResponse.data.data.items);
@@ -136,7 +136,7 @@ const FoodItemsList: React.FC = () => {
   const handleEdit = async (item: Item) => {
     // try {
     //   // Session Cheack
-    //   const sessionResponse = await axios.get("http://localhost:8000/verify-session/", {
+    //   const sessionResponse = await axios.get("https://smart-surplus-food-redistribution.onrender.com/verify-session/", {
     //     withCredentials: true,
     //   });
     //   setUser(sessionResponse.data.user);
@@ -152,7 +152,7 @@ const FoodItemsList: React.FC = () => {
     setLoadMessage("Checking editability...");
     try {
       // Cheack if it can be edited or not
-      const response = await axios.post("http://localhost:8000/admin/check-editability/", {
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/admin/check-editability/", {
         id: item.id
       },
         { withCredentials: true, });
@@ -173,7 +173,7 @@ const FoodItemsList: React.FC = () => {
     setTriggeredItem(null);
     // try {
     //   // Session Cheack
-    //   const sessionResponse = await axios.get("http://localhost:8000/verify-session/", {
+    //   const sessionResponse = await axios.get("https://smart-surplus-food-redistribution.onrender.com/verify-session/", {
     //     withCredentials: true,
     //   });
     //   setUser(sessionResponse.data.user);
@@ -187,7 +187,7 @@ const FoodItemsList: React.FC = () => {
     try {
       setLoading(true);
       setLoadMessage("Removing item...");
-      const response = await axios.post("http://localhost:8000/admin/remove-item/", {
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/admin/remove-item/", {
         id: item.id
       }, { withCredentials: true, });
       console.log("Session:", response.data);
@@ -207,7 +207,7 @@ const FoodItemsList: React.FC = () => {
     setTriggeredSelectedItem(null);
     // try {
     //   // Session Cheack
-    //   const sessionResponse = await axios.get("http://localhost:8000/verify-session/", {
+    //   const sessionResponse = await axios.get("https://smart-surplus-food-redistribution.onrender.com/verify-session/", {
     //     withCredentials: true,
     //   });
     //   setUser(sessionResponse.data.user);
@@ -222,7 +222,7 @@ const FoodItemsList: React.FC = () => {
     try {
       setLoading(true);
       setLoadMessage("Removing selected item...");
-      const response = await axios.post("http://localhost:8000/admin/remove-selected-item/", {
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/admin/remove-selected-item/", {
         id: item.id
       }, { withCredentials: true, });
       console.log("Session:", response.data);
@@ -238,7 +238,7 @@ const FoodItemsList: React.FC = () => {
     try {
       setLoading(true);
       setLoadMessage("OTP sending...");
-      const response = await axios.post("http://localhost:8000/generate-otp/", {
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/generate-otp/", {
         username: item.user_username,
         name: item.user_name,
         email_subject_otp: "Pickup Confirmation request",

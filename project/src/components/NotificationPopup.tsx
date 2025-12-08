@@ -33,7 +33,7 @@ const NotificationPopup: React.FC<NotificationPopupProps> = ({ refreshNotificati
 
     const makeSeen = async () => {
         try {
-            const response = await axios.get("http://localhost:8000/make-notification-seen/", { withCredentials: true, });
+            const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/make-notification-seen/", { withCredentials: true, });
             console.log("Make Seen Response:", response.data);
         } catch (err) {
             console.log(err);
@@ -45,8 +45,8 @@ const NotificationPopup: React.FC<NotificationPopupProps> = ({ refreshNotificati
             try {
                 if(isUnseen) makeSeen();
                 const notificationsResponse = (user.role === "donate") ?
-                    await axios.get("http://localhost:8000/admin/get-admin-notification/", { withCredentials: true, }) :
-                    await axios.get("http://localhost:8000/user/get-user-notification/", { withCredentials: true, });
+                    await axios.get("https://smart-surplus-food-redistribution.onrender.com/admin/get-admin-notification/", { withCredentials: true, }) :
+                    await axios.get("https://smart-surplus-food-redistribution.onrender.com/user/get-user-notification/", { withCredentials: true, });
                 setNotifications([...notificationsResponse.data.data].reverse()); // ... means creating a copy of the array
                 setIsUnseen(notificationsResponse.data.isUnseen);
                 console.log("Notifications:", notificationsResponse.data);
@@ -62,8 +62,8 @@ const NotificationPopup: React.FC<NotificationPopupProps> = ({ refreshNotificati
     //     const getNotifications = async () => {
     //         try {
     //             const notificationsResponse = (user?.role === "donate") ?
-    //                 await axios.get("http://localhost:8000/admin/get-admin-notification/", { withCredentials: true, }) :
-    //                 await axios.get("http://localhost:8000/user/get-user-notification/", { withCredentials: true, });
+    //                 await axios.get("https://smart-surplus-food-redistribution.onrender.com/admin/get-admin-notification/", { withCredentials: true, }) :
+    //                 await axios.get("https://smart-surplus-food-redistribution.onrender.com/user/get-user-notification/", { withCredentials: true, });
     //             setNotifications(notificationsResponse.data.data);
     //             console.log("Notifications:", notificationsResponse.data);
     //         } catch (err) {
