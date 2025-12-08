@@ -67,7 +67,7 @@ const Homepage = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/verify-session/", {
+        const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/verify-session/", {
           withCredentials: true,
         });
         setUser(response.data.user);
@@ -89,7 +89,7 @@ const Homepage = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/home/get-stat-data/", {
+        const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/home/get-stat-data/", {
           withCredentials: true,
         });
         const dailyData = Number(response.data.data.daily_data);
@@ -104,7 +104,7 @@ const Homepage = () => {
         console.log(err);
       }
       try {
-        const response = await axios.post("http://localhost:8000/home/get-top-n-admins/", { num_admin: 5 }, {
+        const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/home/get-top-n-admins/", { num_admin: 5 }, {
           withCredentials: true
         });
         setTopAdmins(response.data.data);
