@@ -11,7 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8000', // FastAPI backend
+        target: 'https://smart-surplus-food-redistribution.onrender.com', // FastAPI backend
         changeOrigin: true,
         secure: true,
       },
