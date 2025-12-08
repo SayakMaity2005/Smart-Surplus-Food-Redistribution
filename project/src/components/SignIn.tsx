@@ -72,7 +72,7 @@ const SignIn = () => {
         try {
           setLoading(true);
           setLoadMessage("Checking registration request...");
-          const response = await axios.post("http://localhost:8000/check-registration-request/", {
+          const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/check-registration-request/", {
             name: formData.name,
             username: formData.email,
             contact: formData.contact,
@@ -112,7 +112,7 @@ const SignIn = () => {
         try {
           setLoading(true);
           setLoadMessage("Logging in...");
-          const response = await axios.post("http://localhost:8000/login/", {
+          const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/login/", {
             username: formData.email,
             password: formData.password,
           }, { withCredentials: true });  // { withCredentials: true } this the line makes the cookie thing possible
@@ -138,7 +138,7 @@ const SignIn = () => {
     try {
       setLoading(true);
       setLoadMessage("OTP sending...");
-      const response = await axios.post("http://localhost:8000/generate-otp/", {
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/generate-otp/", {
         username: formData.email,
         name: formData.name,
         email_subject_otp: "Registration request",
@@ -164,7 +164,7 @@ const SignIn = () => {
     try {
       setLoading(true);
       setLoadMessage("Verifying OTP...");
-      const response = await axios.post("http://localhost:8000/verify-otp/", {
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/verify-otp/", {
         otp: formData.otp
       }, { withCredentials: true });
       setLoading(false);
@@ -173,7 +173,7 @@ const SignIn = () => {
       try {
         setLoading(true);
         setLoadMessage("Creating account...");
-        const response = await axios.post("http://localhost:8000/register/", {
+        const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/register/", {
           name: formData.name,
           username: formData.email,
           contact: formData.contact,
