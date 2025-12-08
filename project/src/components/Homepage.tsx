@@ -291,7 +291,7 @@ const Homepage = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">How It ----------------------------- Works</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Three simple steps to make a difference in your community
             </p>
