@@ -20,6 +20,7 @@ origins = [
     "http://localhost:5173",
     "https://smart-surplus-food-redistribution.vercel.app",
     "https://smart-surplus-food-redistribut-git-030c19-sayak-maitys-projects.vercel.app/",
+    "https://smart-surplus-food-redistribution-6ixd2hfwp.vercel.app/",
 ]
 app.add_middleware(
     CORSMiddleware,
