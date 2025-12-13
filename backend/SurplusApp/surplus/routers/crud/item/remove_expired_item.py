@@ -1,7 +1,7 @@
 from urllib import request
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from datetime import datetime, timezone
-from backend.SurplusApp.surplus.routers.mail_service import send_email
+from surplus.routers.mail_service.send_email import send_email
 from surplus.auth import get_current_user
 from surplus.database import get_db
 from surplus.mail_config import configuration
