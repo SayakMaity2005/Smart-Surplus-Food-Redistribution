@@ -177,7 +177,7 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, item }) => {
                         </button>
 
                         <h2 className="text-xl font-bold mb-4">Confirmation</h2>
-                        <p className="text-gray-700 text-sm">An OTP will be sent to <span className="font-semibold">{item.user_name} <span className="font-normal"> via </span> <span className="italic ">{item.user_username}</span></span> to confirm pickup of <span className="font-semibold">{item.title} [{item.quantity} {item.unit}]</span> at <span className="font-semibold">{item.pickup_location}</span>.</p>
+                        <p className="text-gray-700 text-sm">An OTP has been sent to <span className="font-semibold">{item.user_name} <span className="font-normal"> via </span> <span className="italic ">{item.user_username}</span></span> to confirm pickup of <span className="font-semibold">{item.title} [{item.quantity} {item.unit}]</span> at <span className="font-semibold">{item.pickup_location}</span>.</p>
 
                         <div className="mt-6">
                             {(<div>
