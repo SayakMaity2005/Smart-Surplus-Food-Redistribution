@@ -77,7 +77,11 @@ interface ProfileData {
 const DonorDashboard = () => {
   const navigate = useNavigate();
   const handleLogout = async () => {
-    const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/logout/");
+    const response = await axios.post(
+      "https://smart-surplus-food-redistribution.onrender.com/logout/",
+      {},
+      { withCredentials: true }
+    );
     console.log("Signout Success:", response.data);
     navigate('/'); // Redirect to homepage or login
   };
