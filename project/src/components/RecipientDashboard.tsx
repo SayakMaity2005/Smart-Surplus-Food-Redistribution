@@ -481,7 +481,11 @@ const RecipientDashboard = () => {
   ];
 
   const handleLogout = async () => {
-    const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/logout/");
+    const response = await axios.post(
+      "https://smart-surplus-food-redistribution.onrender.com/logout/",
+      {},
+      { withCredentials: true }
+    );
     console.log("Signout Success:", response.data);
     navigate('/');
   };
