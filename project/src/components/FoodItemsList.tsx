@@ -95,6 +95,7 @@ const FoodItemsList: React.FC = () => {
   const [triggeredSelectedItem, setTriggeredSelectedItem] = useState<SelectedItem | null>(null);
   const [detectChange, setDetectChange] = useState<boolean>(false);
   const [filterOptions, setFilterOptions] = useState<{ value: string; label: string }[]>([]);
+  const [tapForConfirmItem, setTapForConfirmItem] = useState<SelectedItem | null>(null);
 
   useEffect(() => {
     const checkSessionGetData = async () => {
@@ -248,11 +249,13 @@ const FoodItemsList: React.FC = () => {
       setError("");
       // setOtpSent(true);
       // setSeconds(60);
+      setTapForConfirmItem(item);
       setIsPopupOpen(true);
       detectChange ? setDetectChange(false) : setDetectChange(true);
       console.log("OTP Sent:", response.data);
     } catch (err: any) {
       setLoading(false);
+      setTapForConfirmItem(null);
       setError(err.response.data["detail"]);
       // setOtpSent(false);
       // setSeconds(60);
@@ -405,10 +408,10 @@ const FoodItemsList: React.FC = () => {
                     >
                       <CheckCircle size={16} /> Confirm
                     </button>
-                    {loading && (
+                    {(item===tapForConfirmItem || item===triggeredSelectedItem) && loading && (
                       <p className="my-2 text-center text-gray-500 text-base font-normal mt-1"> {loadMessage}</p>
                     )}
-                    {(error != "") && (
+                    {(item===tapForConfirmItem || item===triggeredSelectedItem) && (error != "") && (
                       <p className="err-msg text-center text-red-500 text-base font-normal mt-1">{error}</p>
                     )}
                     {item && item.user_id && item.user_name && item.user_username && (
@@ -478,10 +481,10 @@ const FoodItemsList: React.FC = () => {
                     >
                       <Pencil size={16} /> Edit
                     </button>
-                    {loading && (
+                    {(item===triggeredItem) && loading && (
                       <p className="my-2 text-center text-gray-500 text-base font-normal mt-1"> {loadMessage}</p>
                     )}
-                    {(error != "") && (
+                    {(item===triggeredItem) && (error != "") && (
                       <p className="err-msg text-center text-red-500 text-base font-normal mt-1">{error}</p>
                     )}
                     {true && (<button
