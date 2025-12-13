@@ -142,7 +142,7 @@ const RecipientDashboard = () => {
 
       } catch (err) {
         setUser(null);
-        navigate('/');
+        // navigate('/');
         console.log(err);
       }
       try {
@@ -201,6 +201,20 @@ const RecipientDashboard = () => {
     checkSession();
   }, [selectingItem]);
 
+  const verifySession = async () => {
+    try {
+      const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/verify-session/", {
+        withCredentials: true,
+      });
+      setUser(response.data.user);
+      console.log("Session:", response.data);
+    } catch (err) {
+      setUser(null);
+      navigate('/');
+      console.warn("Session not verified:", err);
+    }
+  };
+
   // useEffect(() => { setSelectingItem(false) }, [selectingItem]);
 
   const getUserName = (name: string) => {
@@ -219,6 +233,7 @@ const RecipientDashboard = () => {
 
   // Select Item
   const selectItem = async (itemId: number) => {
+    await verifySession();
     const triggeredItem = items.find(item => item.id === itemId);
     navigate("/review-item", { state: { item: triggeredItem } });
     // try {
@@ -238,6 +253,7 @@ const RecipientDashboard = () => {
   };
   // selected item details
   const selectedItemDetails = async (itemId: number) => {
+    await verifySession();
     const triggeredItem = selectedItems.find(item => item.id === itemId);
     navigate("/selected-item-details", { state: { item: triggeredItem } });
   };
@@ -254,6 +270,7 @@ const RecipientDashboard = () => {
   const handleProfileDataPopup = async () => {
     setProfilePopup(true);
     if (profileData) return;
+    await verifySession();
     try {
       const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/profile/get-profile/", { withCredentials: true, });
       // setNotifications(notificationsResponse.data.data);
@@ -267,6 +284,7 @@ const RecipientDashboard = () => {
   const handleProfileDataEditPopup = async () => {
     setProfileEditPopup(true);
     if (profileData) return;
+    await verifySession();
     try {
       const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/profile/get-profile/", { withCredentials: true, });
       // setNotifications(notificationsResponse.data.data);
