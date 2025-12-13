@@ -825,15 +825,15 @@ const DonorDashboard = () => {
             <motion.div className="bg-white rounded-xl shadow-sm border p-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
               <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full flex items-center space-x-3 p-3 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors duration-200" onClick={async () => {await verifySession(); navigate('/add-donation')}}>
+                <button className="w-full flex items-center space-x-3 p-3 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors duration-200" onClick={() => navigate('/add-donation')}>
                   <Plus className="w-5 h-5 text-emerald-600 hover:scale-110 transition-transform duration-300" />
                   <span className="font-medium text-emerald-700">Add New Donation</span>
                 </button>
-                <button className="w-full flex items-center space-x-3 p-3 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors duration-200" onClick={async () => {await verifySession(); navigate('/food-items')}}>
+                <button className="w-full flex items-center space-x-3 p-3 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors duration-200" onClick={async () => { await verifySession(); navigate('/food-items') }}>
                   <Package className="w-5 h-5 text-orange-600 hover:scale-110 transition-transform duration-300" />
                   <span className="font-medium text-orange-700">Food Items List</span>
                 </button>
-                <button className="w-full flex items-center space-x-3 p-3 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors duration-200" onClick={async () => {await verifySession(); navigate('/events')}}>
+                <button className="w-full flex items-center space-x-3 p-3 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors duration-200" onClick={() => navigate('/events')}>
                   <span className="w-5 h-5 text-orange-600">🎉</span>
                   <span className="font-medium text-orange-700">Events</span>
                 </button>

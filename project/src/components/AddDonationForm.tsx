@@ -50,7 +50,7 @@ const AddDonationForm: React.FC = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/verify-session/", {
+        const response = await axios.get("https://smart-surplus-food-redistribution.onrender.com/verify-session/", {
           withCredentials: true,
         });
         setUser(response.data.user);
@@ -79,7 +79,7 @@ const AddDonationForm: React.FC = () => {
     try {
       const now = new Date();
       const expiryTime = addHours(now, Number(formData.safeToEatHours));
-      const response = await axios.post("http://localhost:8000/admin/add-item/", {
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/admin/add-item/", {
         title: formData.title,
         type: formData.type,
         quantity: formData.quantity,
@@ -128,7 +128,7 @@ const AddDonationForm: React.FC = () => {
 
     try {
       setLoadingMessage("Uploading image...");
-      const response = await axios.post("http://localhost:8000/upload-image/", formData, {
+      const response = await axios.post("https://smart-surplus-food-redistribution.onrender.com/upload-image/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
