@@ -12,7 +12,7 @@ const ReviewItem: React.FC = () => {
     const { item } = location.state || {}; // item data passed via navigate('/review', { state: { item } })
 
     const [quantity, setQuantity] = useState<number>(1);
-    const [confirming, setConfirming] = useState(false);
+    // const [confirming, setConfirming] = useState(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
 
@@ -41,7 +41,7 @@ const ReviewItem: React.FC = () => {
     const pickupCloseTime = new Date(item.expiry_time).toString().substring(16, 21);
 
     const handleConfirm = async () => {
-        if (confirming) return;
+        if (loading) return;
         try {
             setLoading(true);
             setLoadingMessage("Confirming your selection...");
@@ -165,12 +165,12 @@ const ReviewItem: React.FC = () => {
                 <div className="flex justify-center mt-8">
                     <motion.button
                         onClick={handleConfirm}
-                        disabled={confirming}
+                        disabled={loading}
                         whileTap={{ scale: 0.95 }}
-                        className={`px-6 py-2 rounded-full text-white font-semibold shadow ${confirming ? "bg-gray-400" : "bg-emerald-500 hover:bg-emerald-600"
+                        className={`px-6 py-2 rounded-full text-white font-semibold shadow ${loading ? "bg-gray-400" : "bg-emerald-500 hover:bg-emerald-600"
                             } transition-all`}
                     >
-                        {confirming ? "Confirming..." : "Confirm & Receive"}
+                        {loading ? "Confirming..." : "Confirm & Receive"}
                     </motion.button>
                 </div>
             </motion.div>
