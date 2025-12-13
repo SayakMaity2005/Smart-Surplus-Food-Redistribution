@@ -1,6 +1,7 @@
 from urllib import request
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from datetime import datetime, timezone
+from backend.SurplusApp.surplus.routers.mail_service import send_email
 from surplus.auth import get_current_user
 from surplus.database import get_db
 from surplus.mail_config import configuration
@@ -230,21 +231,29 @@ async def remove_expired_item(db: Session = Depends(get_db)):
         if is_item_removed:
             # Mail Sending --------------------------------------- ##
             email = str(user.username)
-            message = MessageSchema(
-                subject="Selected Item Expired",
-                recipients=[email],
-                body=f"Dear {request.name},\nYour selected food item {item.quantity} {item.unit} {item.title} has expired and removed from your selected items list in portal.",
-                subtype="plain"
-            )
             try:
-                fm = FastMail(configuration)
-                await fm.send_message(message)
-            except smtplib.SMTPRecipientsRefused:
-                # raise HTTPException(status_code=400, detail="Invalid email address")
-                error = "Invalid email address"
+                send_email(
+                    email,
+                    "Selected Item Expired",
+                    f"Dear {request.name},\nYour selected food item {item.quantity} {item.unit} {item.title} has expired and removed from your selected items list in portal."
+                )
             except Exception as e:
-                # raise HTTPException(status_code=500, detail=f"Email sending failed: {str(e)}")
-                error = f"Email sending failed: {str(e)}"
+                raise HTTPException(status_code=500, detail=f"Email sending failed: Unknown Network Error [{str(e)}]")
+            # message = MessageSchema(
+            #     subject="Selected Item Expired",
+            #     recipients=[email],
+            #     body=f"Dear {request.name},\nYour selected food item {item.quantity} {item.unit} {item.title} has expired and removed from your selected items list in portal.",
+            #     subtype="plain"
+            # )
+            # try:
+            #     fm = FastMail(configuration)
+            #     await fm.send_message(message)
+            # except smtplib.SMTPRecipientsRefused:
+            #     # raise HTTPException(status_code=400, detail="Invalid email address")
+            #     error = "Invalid email address"
+            # except Exception as e:
+            #     # raise HTTPException(status_code=500, detail=f"Email sending failed: {str(e)}")
+            #     error = f"Email sending failed: {str(e)}"
             
     # for item in expired_partial_selected_items:
     #     try:

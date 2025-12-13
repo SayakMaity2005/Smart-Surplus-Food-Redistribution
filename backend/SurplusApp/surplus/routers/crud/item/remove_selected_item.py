@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, Request, HTTPException, status
 from sqlalchemy.orm import Session
+from backend.SurplusApp.surplus.routers.mail_service.send_email import send_email
 from surplus.auth import get_current_user
 from surplus.database import get_db
 from surplus.mail_config import configuration
@@ -73,18 +74,26 @@ async def remove_selected_item(request: CheckEdit, request_cookie: Request, db: 
             db.commit()
         # Mail Sending --------------------------------------- ##
         email = str(user.username)
-        message = MessageSchema(
-            subject="Selected Item Removed",
-            recipients=[email],
-            body=f"Dear {user.name},\nYour selected food item {item.title} has been removed by {current_admin.name}.",
-            subtype="plain"
-        )
         try:
-            fm = FastMail(configuration)
-            await fm.send_message(message)
-        except smtplib.SMTPRecipientsRefused:
-            raise HTTPException(status_code=400, detail="Invalid email address")
+            send_email(
+                email,
+                "Selected Item Removed",
+                f"Dear {user.name},\nYour selected food item {item.title} has been removed by {current_admin.name}."
+            )
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Email sending failed: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Email sending failed: Unknown Network Error [{str(e)}]")
+        # message = MessageSchema(
+        #     subject="Selected Item Removed",
+        #     recipients=[email],
+        #     body=f"Dear {user.name},\nYour selected food item {item.title} has been removed by {current_admin.name}.",
+        #     subtype="plain"
+        # )
+        # try:
+        #     fm = FastMail(configuration)
+        #     await fm.send_message(message)
+        # except smtplib.SMTPRecipientsRefused:
+        #     raise HTTPException(status_code=400, detail="Invalid email address")
+        # except Exception as e:
+        #     raise HTTPException(status_code=500, detail=f"Email sending failed: {str(e)}")
 
     return {"message": "Item removed successfully", "image_destroy_response": image_destroy_response}

@@ -6,8 +6,9 @@ from surplus.auth import get_current_user
 from surplus.database import get_db
 from surplus.mail_config import configuration
 from surplus import models
-from fastapi_mail import FastMail,MessageSchema,ConnectionConfig
-import smtplib
+# from fastapi_mail import FastMail,MessageSchema,ConnectionConfig
+# import smtplib
+from surplus.routers.mail_service.send_email import send_email
 
 
 router = APIRouter()
@@ -235,19 +236,27 @@ async def confirm_donation(request: ConfirmItem, request_cookie: Request, db: Se
 
     # Mail Sending --------------------------------------- ##
     email = str(request.user_username)
-    message = MessageSchema(
-        subject="Selected Item Confirmation",
-        recipients=[email],
-        body=f"Dear {request.user_name},\nYour selected food item, {confirmed_item.quantity}{confirmed_item.unit} {confirmed_item.title} has been confirmed by {current_admin.name}.",
-        subtype="plain"
-    )
     try:
-        fm = FastMail(configuration)
-        await fm.send_message(message)
-    except smtplib.SMTPRecipientsRefused:
-        raise HTTPException(status_code=400, detail="Invalid email address")
+        send_email(
+            str(request.user_username),
+            "Selected Item Confirmation",
+            f"Dear {request.user_name},\nYour selected food item, {confirmed_item.quantity}{confirmed_item.unit} {confirmed_item.title} has been confirmed by {current_admin.name}."
+        )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Email sending failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Email sending failed: Unknown Network Error [{str(e)}]")
+    # message = MessageSchema(
+    #     subject="Selected Item Confirmation",
+    #     recipients=[email],
+    #     body=f"Dear {request.user_name},\nYour selected food item, {confirmed_item.quantity}{confirmed_item.unit} {confirmed_item.title} has been confirmed by {current_admin.name}.",
+    #     subtype="plain"
+    # )
+    # try:
+    #     fm = FastMail(configuration)
+    #     await fm.send_message(message)
+    # except smtplib.SMTPRecipientsRefused:
+    #     raise HTTPException(status_code=400, detail="Invalid email address")
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=f"Email sending failed: {str(e)}")
     
     # admin notification
     new_notification = models.AdminNotification(

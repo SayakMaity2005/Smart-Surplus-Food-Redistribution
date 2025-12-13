@@ -50,6 +50,8 @@ BREVO_API_KEY = os.getenv("BREVO_API_KEY")
 def send_email(to, subject, body):
     url = "https://api.brevo.com/v3/smtp/email"
 
+    body = body.replace("\n", "<br>")
+
     payload = {
         "sender": {"name": "Surplus App", "email": "teamzerobite@gmail.com"},
         "to": [{"email": to}],
