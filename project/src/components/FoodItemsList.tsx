@@ -358,6 +358,9 @@ const FoodItemsList: React.FC = () => {
               </button>
             </div>
           )}
+          {selectedItems.length > 0 && (
+            <h2 className="text-2xl font-bold text-emerald-700 m-4">Selected Items</h2>
+          )}
           <AnimatePresence>
             {/* Show selected items applying filter */}
             {filteredSelectedItems.map((item, index) => {
@@ -436,6 +439,9 @@ const FoodItemsList: React.FC = () => {
               )
             })}
           </AnimatePresence>
+          {selectedItems.length > 0 && (
+            <h2 className="text-2xl font-bold text-emerald-700 m-4">Added items</h2>
+          )}
           <AnimatePresence>
             {items.map((item, index) => {
               const expiryTime = new Date(item.expiry_time);
