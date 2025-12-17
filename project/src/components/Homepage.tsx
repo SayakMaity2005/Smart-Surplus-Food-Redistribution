@@ -227,13 +227,14 @@ const Homepage = () => {
         id="home"
         className="relative bg-gradient-to-br from-emerald-50 to-orange-50 py-20"
         style={{
-          backgroundImage: homepagefrontImage, // 'url(https://images.pexels.com/photos/6995308/pexels-photo-6995308.jpeg)',
+          backgroundImage: `url(${homepagefrontImage})`, // 'url(https://images.pexels.com/photos/6995308/pexels-photo-6995308.jpeg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundBlendMode: 'overlay'
         }}
       >
-        <div className="absolute inset-0 bg-emerald-900 bg-opacity-40"></div>
+        {/* <div className="absolute inset-0 bg-emerald-900 bg-opacity-40"></div> */}
+        <div className="absolute inset-0 bg-gray-900 bg-opacity-70"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center"
