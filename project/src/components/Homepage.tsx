@@ -25,7 +25,8 @@ import {
   CalendarCheck // for monthly meals
 } from 'lucide-react';
 import axios from "axios";
-import userProfileIconImage from "../assets/user-profile-icon-circle-digital-ui.jpg"
+import userProfileIconImage from "../assets/user-profile-icon-circle-digital-ui.jpg";
+import homepagefrontImage from "../assets/homepage-front-image.jpg";
 
 interface User {
   name: string
@@ -226,7 +227,7 @@ const Homepage = () => {
         id="home"
         className="relative bg-gradient-to-br from-emerald-50 to-orange-50 py-20"
         style={{
-          backgroundImage: 'url(https://images.pexels.com/photos/6995308/pexels-photo-6995308.jpeg)',
+          backgroundImage: homepagefrontImage, // 'url(https://images.pexels.com/photos/6995308/pexels-photo-6995308.jpeg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundBlendMode: 'overlay'
