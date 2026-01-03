@@ -463,11 +463,11 @@ const SignIn = () => {
             </div>
           )}
 
-          <div className="my-6 flex items-center">
+          {/* <div className="my-6 flex items-center">
             <div className="border-t border-gray-300 flex-1"></div>
             <span className="bg-white px-4 text-sm text-gray-500">Or</span>
             <div className="border-t border-gray-300 flex-1"></div>
-          </div>
+          </div> */}
 
           {/* <button
             onClick={handleGoogleSignIn}
