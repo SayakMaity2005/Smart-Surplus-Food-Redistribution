@@ -465,11 +465,11 @@ const SignIn = () => {
 
           <div className="my-6 flex items-center">
             <div className="border-t border-gray-300 flex-1"></div>
-            <span className="bg-white px-4 text-sm text-gray-500">Or</span>
+            {/*<span className="bg-white px-4 text-sm text-gray-500">Or</span>*/}
             <div className="border-t border-gray-300 flex-1"></div>
           </div>
 
-          <button
+          {/*<button
             onClick={handleGoogleSignIn}
             className="w-full bg-white border-2 border-gray-300 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-50 transition-all duration-200 flex items-center justify-center space-x-3"
           >
@@ -480,7 +480,7 @@ const SignIn = () => {
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
             </svg>
             <span>Continue with Google</span>
-          </button>
+          </button>*/}
 
           <div className="text-center mt-6">
             <p className="text-gray-600">
