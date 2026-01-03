@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from surplus.auth import get_db
 from surplus import models
 from sqlalchemy.orm import Session
-from sqlalchemy import extract
 
 router = APIRouter()
 
@@ -25,8 +24,7 @@ async def get_top_n_admins(request: RequestSchema, db: Session = Depends(get_db)
     highest_items_provided = highest_items_provided_monthly_data.items_provided
     if highest_items_provided == 0: highest_items_provided = 1
     top_n_items_provided_monthly_data = db.query(models.MonthlyData).filter(
-        extract("month", models.MonthlyData.date) == datetime.now(timezone.utc).month,
-        extract("year", models.MonthlyData.date) == datetime.now(timezone.utc).year
+        datetime.fromisoformat(models.MonthlyData.date.replace("Z", "+00:00")).astimezone(timezone.utc).month==datetime.now(timezone.utc).month 
     ).order_by(
         ((0.75*(models.MonthlyData.impact_score))+(0.25*((100.0*(models.MonthlyData.items_provided))/highest_items_provided))).desc()
     ).limit(request.num_admin).all()
